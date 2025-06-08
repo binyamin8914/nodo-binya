@@ -1,0 +1,65 @@
+{% extends "admin.html" %}
+
+{% block title %}Responder Solicitud{% endblock %}
+
+{% block content %}
+<div class="panel" style="
+    background-color: white;
+    border-radius: 20px;
+    padding: 50px 40px;
+    width: 100%;
+    max-width: 480px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+    margin: auto;
+">
+    <a href="{% url 'reuniones:listar_solicitudes_ejecutivo' %}" style="text-decoration:none;color:#4361ee;font-weight:600;display:inline-block;margin-bottom:18px;">&larr; Volver a solicitudes</a>
+    <h2 style="font-size: 1.9rem; font-weight: 800; margin-bottom: 25px; color: #1e293b; text-align: center;">
+        Responder Solicitud
+    </h2>
+
+    <p style="font-size: 1rem; color: #334155; margin-bottom: 10px;">
+        <strong>Match:</strong> {{ solicitud.match.desafio.nombreDesafio }}
+    </p>
+    <p style="font-size: 1rem; color: #334155; margin-bottom: 10px;">
+        <strong>Solicitante:</strong> {{ solicitud.solicitante.get_full_name|default:solicitud.solicitante.email }}
+    </p>
+    <p style="font-size: 1rem; color: #334155; margin-bottom: 10px;">
+        <strong>Fecha propuesta:</strong> {{ solicitud.fecha_propuesta }}
+    </p>
+
+    {% if messages %}
+        {% for m in messages %}
+            <div class="message" style="
+                background-color: #dbeafe;
+                border-left: 5px solid #3b82f6;
+                padding: 10px 15px;
+                border-radius: 8px;
+                margin-bottom: 20px;
+                color: #1e3a8a;
+            ">{{ m }}</div>
+        {% endfor %}
+    {% endif %}
+
+    {% if form.errors %}
+      <div class="message" style="background-color:#fee2e2; color:#b91c1c; border-left:5px solid #b91c1c; margin-bottom: 20px;">
+        Por favor corrige los errores en el formulario.
+      </div>
+    {% endif %}
+
+    <form method="post" style="display: flex; flex-direction: column; gap: 15px;">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Enviar Respuesta" style="
+            padding: 14px;
+            font-size: 1rem;
+            font-weight: 700;
+            color: white;
+            background-color: #4361ee;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        ">
+    </form>
+</div>
+{% endblock %}

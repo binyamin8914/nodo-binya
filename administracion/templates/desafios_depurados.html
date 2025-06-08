@@ -1,0 +1,92 @@
+{% extends 'admin.html' %}
+
+{% load static %}
+
+{% block content %}
+<h1>Desafíos depurados</h1>
+
+<!-- Formulario de búsqueda -->
+<form method="get" action="" class="buscador">
+    <input type="text" name="q" placeholder="Buscar por nombre o empresa..." value="{{ query }}">
+    <button type="submit">Buscar</button>
+</form>
+
+<form method="POST" action="{% url 'actualizar_check_masivo' %}">
+    <script src="{% static 'js/check.js' %}"></script>
+    {% csrf_token %}
+    <table border="1" cellpadding="10" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nombre</th>
+                <th>Empresa</th>
+                <th>Contacto</th>
+                <th>Principal</th>
+                <th>Enlace Publico</th>
+                <th>Opciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for desafio in desafios %}
+            <tr>
+                <td>{{ desafio.id }}</td>
+                <td>{{ desafio.nombreDesafio }}</td>
+                <td>{{ desafio.empresa.nombre }}</td>
+                <td>{{ desafio.contacto.nombre }}</td>
+                <td>
+                    <input 
+                        type="checkbox" 
+                        name="isPrincipal_{{ desafio.id }}" 
+                        class="checkbox-trigger"
+                        {% if desafio.isPrincipal %}checked{% endif %}
+                    >
+                </td>
+                <td>
+                    <input 
+                        type="checkbox" 
+                        name="show_{{ desafio.id }}" 
+                        class="checkbox-trigger"
+                        {% if desafio.show %}checked{% endif %}
+                        
+                    >
+                    <a href="{% url 'detalle' id=desafio.id %}">Ver</a>
+                </td>
+                <td>
+                    <a href="{% url 'verdesafio' id=desafio.id %}">Ver</a>
+                    <button type="button" onclick="eliminarDesafio({{ desafio.id }})">Eliminar</button>
+
+                    <script>
+                        function eliminarDesafio(id) {
+                            if (confirm("¿Estás seguro de que deseas eliminar este desafío?")) {
+                                fetch("{% url 'eliminarDesafio' 0 %}".replace('0', id), {
+                                    method: "POST",
+                                    headers: {
+                                        "X-CSRFToken": "{{ csrf_token }}",
+                                        "Content-Type": "application/json"
+                                    },
+                                    body: JSON.stringify({})
+                                }).then(response => {
+                                    if (response.ok) {
+                                        location.reload(); 
+                                        alert("Eliminado correctamente") // Recargar la página después de eliminar
+                                    } else {
+                                        alert("Error al eliminar el desafío.");
+                                    }
+                                });
+                            }
+                        }
+                    </script>
+
+                    <a href="{% url 'depurar_desafio' id=desafio.postulacion.id %}">Editar</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7">No hay desafíos disponibles.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <button type="submit" id="saveChangesBtn" style="display: none;">Guardar cambios</button>
+</form>
+{% endblock %}

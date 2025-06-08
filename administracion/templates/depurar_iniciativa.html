@@ -1,0 +1,118 @@
+{% extends 'admin.html' %}
+
+{% block content %}
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <title>Depurar Iniciativa</title>
+    <link rel="stylesheet" href="{% static 'css/formulario.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+
+</head>
+<body>
+    {%block volver%}
+    {%endblock%}
+
+    <div class="titulo">
+        <button class="volver" onclick="volver()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M15 8a.5.5 0 0 1-.5.5H3.707l3.147 3.146a.5.5 0 0 1-.708.708l-4-4a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L3.707 7.5H14.5a.5.5 0 0 1 .5.5z"/>
+            </svg> 
+        </button>
+        <h1>Depurar Iniciativa - Postulación: {{ postulacion.id }}</h1>    
+        <button class= "bigbutton"onclick="abrirVentana()">Consultar postulacion</button>
+        <script>
+            function abrirVentana() {
+                window.open("{% url 'verpostulacion_i' id=postulacion.id %}", "ventanaEmergente", "width=1000,height=700,scrollbars=yes,resizable=yes");
+            }
+        </script>
+    </div>
+    <form method="POST" enctype="multipart/form-data" class="depurar-form">
+        {% csrf_token %}
+        <div class="form-columns">
+            <div class="form-column">
+                <label for="postulacion">Postulacion</label>
+                <input type="text" name="postulacion" value="{{ postulacion.id}}" disabled>
+                
+                <label for="contacto">Contacto</label>
+                <input type="text" name="contacto" value="{{ postulacion.contacto }}" disabled>
+                
+                <label for="titulo">Titulo</label>
+                {{ form.titulo }}
+
+                <label for="descripcion">Descripcion de la iniciativa</label>
+                {{ form.descripcion }}
+                
+                <label for="recomendacion">Recomendaciones para la sesion de presentacion</label>
+                {{ form.recomendacion }}
+                
+                
+
+                <label>Documentos Cargados:</label>
+                <ul>
+                    {% for documento in existing_documents %}
+                        <li>
+                            <a href="{% url 'serve_document' documento.archivo.name|slice:'11:' %}" target="_blank">
+                                {{ documento.nombre }}
+                            </a>
+                            <input type="checkbox" name="eliminar_documentos" value="{{ documento.id }}"> Eliminar
+                        </li>
+                    {% empty %}
+                        <li>No hay documentos cargados.</li>
+                    {% endfor %}
+                </ul>
+
+                <label for="documentos">Documentación que nos permita entender mejor la iniciativa:</label>
+                <input type="file" name="documentos" multiple>
+
+                
+
+            </div>
+
+            <div class="form-column">
+                <label for="empresa">Empresa</label>
+                <input type="text" name="empresa" value="{{ postulacion.empresa }}" disabled>
+
+                <label for="ejecutivo">Ejecutivo</label>
+                <input type="text" name="ejecutivo" value="{{ user }}" disabled>
+
+                <label for="preevaluacion">Preevaluacion de la iniciativa</label>
+                {{ form.preevaluacion }}
+
+                <label for="madurez">Madurez de la iniciativa</label>
+                {{ form.madurez }}
+
+                <label for="comite">Comité</label>
+                {{ form.comite }}
+                
+                
+                
+
+                <label for="presentacion">Presentacion</label>
+                    {% if form.instance.presentacion %}
+                        <br>
+                        <!-- Miniatura clickeable -->
+                        <a href="{{ form.instance.presentacion.url }}" target="_blank">
+                            <img src="{{ form.instance.presentacion.url }}" alt="Archivo actual" style="max-width: 150px; cursor: pointer; border: 1px solid #ddd; border-radius: 8px; padding: 5px;">
+                        </a>
+                        <br>
+                    {% endif %}
+                {{ form.presentacion }}
+                
+                <label for="desafio">Desafio al que responde la iniciativa</label>
+                {{ form.desafio }}
+
+
+            </div>
+        </div>
+        <div class="bigbuttons">
+            <button type="submit" name="action" value="save" class="bigbutton">Guardar</button>
+            <button type="submit" name="action" value="save_and_redirect" class="bigbutton">Guardar y Crear match</button>
+        </div>
+    </form>
+
+</body>
+</html>
+{%endblock%}

@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/blog.css' %}">
+{% endblock %} 
+
+{%block content%}
+    <div class="container">
+        <div class="search">
+            <input type="text" id="search-input" placeholder="Buscar posts..." />
+        </div>
+
+        <div class="posts" id="results">
+            <h1>Ultimos articulos</h1>
+            {% for post in posts %}
+                <a href="{% url 'post' slug=post.slug %}" class="post_a">
+                    <div class="post_preview">
+                        <img src="{{ post.portada.url }}" alt="{{ post.titulo }}">
+                        <div class="post_preview_content">
+                            <h3>{{ post.titulo }}</h3>
+                            <p>{{ post.contenido_preview }}</p>
+                            <small>{{ post.fecha }}</small>
+                        </div>
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+    <script src="{% static 'js/blog.js' %}"></script>
+{%endblock%}

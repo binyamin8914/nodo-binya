@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/form.css' %}">
+{% endblock %} 
+{% block content %}
+<div class="contacto">
+    
+    <div class="form-container">
+        <h1>Gracias!, Pronto nos contactaremos contigo</h1>
+        <button onclick="location.href='/'">Volver al inicio</button>
+
+    </div>
+    <img src="{% static 'img/contacto.png' %}" alt="NODO contacto">
+    
+</div>
+{% endblock %}

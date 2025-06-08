@@ -1,0 +1,58 @@
+{% extends 'admin.html' %}
+
+{% block content %}
+<h1 >Postulaciones de iniciativas</h1>
+<form method="get" action="" class="buscador">
+    <input type="text" name="q" placeholder="Buscar por empresa, titulo o id" value="{{ query }}">
+    <button type="submit">Buscar</button>
+</form>
+<table border="1" cellpadding="10" cellspacing="0">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Empresa</th>
+            <th>Fecha de Postulación</th>
+            <th>Titulo</th>
+            <th>Estado
+                <form class="filtro_estado" method="get" action="">
+                <select name="estado" id="estado">
+                    <option value=""{% if estado_seleccionado == '' %}selected{% endif %}>Todos</option>
+                    <option value="Por Depurar" {% if estado_seleccionado == 'Por Depurar' %}selected{% endif %}>Por depurar</option>
+                    <option value="Depurado" {% if estado_seleccionado == 'Depurado' %}selected{% endif %}>Depurado</option>
+                    <option value="Abandonado" {% if estado_seleccionado == 'Abandonado' %}selected{% endif %}>Abandonado</option>
+
+                </select>
+                <button type="submit">Filtrar</button>
+            </form></th>
+            
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for postulacion in postulaciones %}
+        <tr>
+            <td>{{ postulacion.id }}</td>
+            <td>{{ postulacion.empresa.nombre }}</td>
+            <td>{{ postulacion.fecha|date:"d/m/Y" }}</td>
+            <td>{{ postulacion.titulo }}</td>
+            <td>{{ postulacion.estado }}</td>
+            <td>
+                <a href="{% url 'verpostulacion_i' id=postulacion.id %}">Ver</a>
+                <form method="post" action="{% url 'eliminarPostulacionIniciativa' id=postulacion.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" onclick="return confirm('¿Estás seguro de que deseas eliminar esta postulacion?');">
+                        Eliminar
+                    </button>
+                </form>
+                <a href="{% url 'depurar_iniciativa' id=postulacion.id %}" >Depurar</a>
+            </td>
+            
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="5">No hay postulaciones disponibles.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

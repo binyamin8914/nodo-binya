@@ -1,0 +1,52 @@
+{% extends 'admin.html' %}
+{% load static %}
+{% block content %}
+    <link rel="stylesheet" href="{% static 'css/ver.css' %}">
+    <h1>Postulación {{postulacion.id}}</h1>
+    <div class="container-ver">
+        <div class="cuadro empresa">
+            <h2>Empresa</h2>
+            <p><b>Nombre:</b> {{ postulacion.empresa.nombre }}</p>
+            <p><b>Cantidad de personas:</b> {{ postulacion.empresa.cantPersonas }}</p>
+            <p><b>Año:</b> {{ postulacion.empresa.año }}</p>
+            <p><b>Actividad:</b> {{ postulacion.empresa.actividad }}</p>
+            <p><b>País:</b> {{ postulacion.empresa.pais }}</p>
+            <p><b>Ciudad:</b> {{ postulacion.empresa.ciudad }}</p>
+        </div>
+        
+        <div class="cuadro contacto">
+            <h2>Contacto</h2>
+            <p><b>Nombre:</b> {{ postulacion.contacto.nombre }}</p>
+            <p><b>Cargo:</b> {{ postulacion.contacto.cargo }}</p>
+            <p><b>Correo:</b> {{ postulacion.contacto.correo }}</p>
+            <p><b>Teléfono:</b> {{ postulacion.contacto.telefono }}</p>
+        </div>
+        
+        <div class="cuadro postulacion">
+            <h2>Detalles de la postulación</h2>
+            <p><b>Fecha:</b> {{ postulacion.fecha }}</p>
+            <p><b>Titulo:</b> {{ postulacion.titulo }}</p>
+            <p><b>Descripcion:</b> {{ postulacion.descripcion }}</p>
+            <p><b>Presencia en Latinoamerica:</b> {{ postulacion.latam }}</p>
+            <p><b>Enlace a video:</b> {{ postulacion.video }}</p>
+            <p><b>Como se diferencia:</b> {{ postulacion.diferenciacion }}</p>
+            <p><b>Traccion:</b> {{ postulacion.traccion }}</p>
+            <p><b>Piloto:</b> {{ postulacion.piloto }}</p>
+            <p><b>Desafio:</b> {{ postulacion.desafio }}</p>
+            <p><b>Origen:</b> {{ postulacion.origen }}</p>
+            <p><b>Estado:</b> {{ postulacion.estado }}</p>
+            <p><b>Pregunta:</b> {{ postulacion.pregunta }}</p>
+        </div>
+        
+    </div>  
+    <form method="post" action="{% url 'cambiar_estado_postulacion_i' postulacion.id %}">
+        {% csrf_token %}
+        <button type="submit">
+            {% if postulacion.estado == "Abandonado" %}
+                Marcar como Por depurar
+            {% else %}
+                Marcar como Abandonado
+            {% endif %}
+        </button>
+    </form>
+{% endblock %}

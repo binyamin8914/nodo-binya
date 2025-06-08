@@ -1,0 +1,79 @@
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    margin: 0;
+    background: linear-gradient(130deg,  #2525a5,#009ef3);
+    height: 100%;
+    display: flex;
+    color: #333;
+    gap: 10%;
+}
+.contacto{
+    display: flex;
+    flex-grow: 1;
+    justify-content: center;
+    
+
+}
+.contacto img{
+    width: 40%;
+    height:fit-content;
+    margin: 0;
+}
+.form-container {
+    margin: 30px;
+    justify-self: center;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    max-width: 800px;
+    width: 100%;
+    background-color: #ffffff;
+}
+
+h1 {
+    text-align: center;
+}
+
+
+label {
+    display: block;
+    font-weight: bold;
+}
+
+input, textarea,.button_form {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+}
+textarea {
+    resize: vertical;
+}
+input:focus, textarea:focus {
+    border-color: #007BFF;
+    outline: none;
+}
+
+.button_form {
+    background-color: #e66706;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #904002;
+}
+@media (max-width: 600px) {
+    .contacto img{
+        display: none;
+    }
+    .form-container {
+        margin: 40px;
+    }
+}

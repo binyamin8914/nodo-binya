@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/detalle.css' %}">
+{% endblock %} 
+
+
+{%block content%}
+    <div class="fondo">
+        <img src="{% static 'img/fondo.png' %}" >  
+    </div>
+    
+    <div class="content">
+        <div class="tarjeta">
+            <img src="{{ desafio.imagen }}" alt="Desafio NODO portada">
+            <div class="tarjeta-content">
+                <h2>Encargado: </h2>
+                <h3>{{desafio.ejecutivo.nombre}}</h3>
+                <h3>{{desafio.ejecutivo.apellido}}</h3>
+                <h3>{{desafio.ejecutivo.correo}}</h3>
+                
+            </div>
+            
+        </div>
+        <div class="descripcion">
+            <h1>{{desafio.nombreDesafio}}</h1>
+            <h3>{{desafio.empresa.actividad}}</h3>
+            <h3><svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7.5 9.16669C7.5 9.82973 7.76339 10.4656 8.23223 10.9345C8.70107 11.4033 9.33696 11.6667 10 11.6667C10.663 11.6667 11.2989 11.4033 11.7678 10.9345C12.2366 10.4656 12.5 9.82973 12.5 9.16669C12.5 8.50365 12.2366 7.86776 11.7678 7.39892C11.2989 6.93008 10.663 6.66669 10 6.66669C9.33696 6.66669 8.70107 6.93008 8.23223 7.39892C7.76339 7.86776 7.5 8.50365 7.5 9.16669Z" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M14.7142 13.8808L11.1784 17.4167C10.8659 17.7289 10.4422 17.9042 10.0005 17.9042C9.55872 17.9042 9.13506 17.7289 8.82254 17.4167L5.28588 13.8808C4.35356 12.9485 3.71866 11.7606 3.46145 10.4674C3.20424 9.17419 3.33629 7.83376 3.84088 6.61561C4.34547 5.39745 5.19996 4.35628 6.29628 3.62376C7.3926 2.89123 8.68152 2.50024 10 2.50024C11.3186 2.50024 12.6075 2.89123 13.7038 3.62376C14.8001 4.35628 15.6546 5.39745 16.1592 6.61561C16.6638 7.83376 16.7958 9.17419 16.5386 10.4674C16.2814 11.7606 15.6465 12.9485 14.7142 13.8808Z" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                {{desafio.empresa.pais}}
+            </h3>
+            <h2> Desafio(s)</h2>
+            <p>{{desafio.descripcionDesafio}}</p>
+            <a href="{% url 'empresa_step_i' desafio.id %}" class="button"> Postular iniciativa </a>
+
+        </div>
+        
+    </div>
+    
+{%endblock%}

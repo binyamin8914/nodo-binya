@@ -1,0 +1,54 @@
+{% extends "admin.html" %}
+{%block content%}
+{% load static %}
+
+  <link rel="stylesheet" href="{% static 'css/formulario.css' %}">
+
+  <h1 >Crear Match</h1>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="match">
+        <div class="form-group">
+            <label for="iniciativa">Iniciativa</label>
+            {{ form.iniciativa }}
+            {{ iniciativa.errors|safe }} 
+        </div>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" width="48" height="48" stroke-width="1.25" stroke-linejoin="round" stroke-linecap="round" stroke="currentColor" transform="rotate(90)">
+            <path d="M8 7l4 -4l4 4"></path>
+            <path d="M8 17l4 4l4 -4"></path>
+            <path d="M12 3l0 18"></path>
+        </svg>
+        
+        <div class="form-group">
+            <label for="desafio">Desafio</label>
+            {{ form.desafio }}
+            {{ form.iniciativa.errors|safe }} 
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <label for="estado">Estado</label>
+        {{ form.estado }}
+        {{ iniciativa.errors|safe }} 
+    </div>
+    <div class="form-group">
+        <label for="ejecutivo">Ejecutivo</label>
+        {{ form.ejecutivo }}
+        {{ iniciativa.errors|safe }} 
+    </div>
+    <div class="form-group">
+        <label for="brl_">BRL </label>
+        {{ form.brl }}
+        {{ iniciativa.errors|safe }} 
+    </div>
+    <div class="form-group">
+        <label for="trl">TRL</label>
+        {{ form.trl }}
+        {{ iniciativa.errors|safe }} 
+    </div>
+    
+    
+    <button class="bigbutton" type="submit">Guardar </button>
+  </form>
+ 
+{%endblock%}

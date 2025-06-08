@@ -1,0 +1,44 @@
+{% extends "admin.html" %}
+
+{% block title %}Mis Solicitudes{% endblock %}
+
+{% block content %}
+<div class="panel" style="
+    background-color: white;
+    border-radius: 16px;
+    padding: 45px 50px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    margin: auto;
+">
+    <div class="nav-links" style="margin-bottom: 20px; text-align: left;">
+        <a href="{% url 'reuniones:home' %}" style="color:#4361ee;font-weight:600;">Volver</a>
+    </div>
+
+    <h2 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 10px; color: #1e293b;">
+        Mis Solicitudes
+    </h2>
+
+    {% if messages %}
+        {% for m in messages %}
+            <p style="background-color:#e6f3ff;padding:10px;border-radius:8px;color:#1e293b;">{{ m }}</p>
+        {% endfor %}
+    {% endif %}
+
+    {% if solicitudes %}
+        {% for solicitud in solicitudes %}
+            <div class="solicitud-item" style="text-align: left; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #ddd;">
+                <h3 style="margin: 0 0 5px 0; color: #1e293b;">{{ solicitud.match.desafio.nombreDesafio }}</h3>
+                <p style="margin: 3px 0;"><strong>Destinatario:</strong> {{ solicitud.destinatario.get_full_name|default:solicitud.destinatario.email }}</p>
+                <p style="margin: 3px 0;"><strong>Fecha propuesta:</strong> {{ solicitud.fecha_propuesta|date:"d/m/Y H:i" }}</p>
+                <p style="margin: 3px 0;"><strong>Estado:</strong> {{ solicitud.get_estado_display }}</p>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p style="color:#64748b;">No has enviado solicitudes.</p>
+    {% endif %}
+</div>
+{% endblock %}
+

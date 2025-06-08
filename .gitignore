@@ -1,0 +1,22 @@
+# Entornos virtuales
+venv/
+env/
+
+# Python
+*.pyc
+*.pyo
+__pycache__/
+
+# Archivos de entorno y secretos
+.env
+*.env
+secrets/
+settings.py
+
+# Archivos de medios
+/media/
+media/*
+
+# Otros
+administracion/documentos/*
+runserver.bat

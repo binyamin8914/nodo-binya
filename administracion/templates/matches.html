@@ -1,0 +1,171 @@
+{% extends 'admin.html' %}
+
+{% load static %}
+{% block head %}
+<script src="{% static 'js/matches.js' %}"></script>
+{% endblock %}
+{% block content %}
+
+<h1>Proyectos matcheados</h1>
+
+<form method="get" action="" class="buscador">
+    <input type="text" name="q" placeholder="Buscar " value="{{ query }}">
+    <button type="submit">Buscar</button>
+</form>
+
+<table border="1" cellpadding="10" cellspacing="0" id="matchesTable">
+    <thead>
+        <tr>
+            <th></th>
+            <th>Id</th>
+            <th>Desafio</th>
+            <th>Iniciativa</th>
+            <th>Ejecutivo</th>
+            <th>BRL</th>
+            <th>TRL</th>
+            <th>Opciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for match in matches %}
+        <tr class="match-row" data-id="match-{{ match.id }}">
+            <td><button class="toggle-row">+</button></td>
+            <td>{{ match.id }}</td>
+            <td>{{ match.desafio }}</td>
+            <td>{{ match.iniciativa }}</td>
+            <td>{{ match.ejecutivo }}</td>
+            <td>{{ match.brl }}</td>
+            <td>{{ match.trl }}</td>
+            <td>
+                <button onclick="eliminarMatch({{ match.id }})">Eliminar</button>
+                <a href="{% url 'editar_match' match.desafio.id match.iniciativa.id match.id %}">Editar</a>
+            </td>
+        </tr>
+        <tr class="details-row" data-id="details-{{ match.id }}">
+            <td colspan="8">
+                <div class="details-content">
+                    <h3>Objetivos</h3>
+                    <a href="{% url 'crear_objetivo' match.id %}" class="button">Crear Objetivo</a>
+                    <table class="nested-table">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>Id</th>
+                                <th>Nombre</th>
+                                <th>Responsable</th>
+                                <th>Perspectiva</th>
+                                <th>Fecha Objetivo</th>
+                                <th>Opciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for objetivo in match.objetivo_set.all %}
+                            <tr class="objetivo-row" data-id="objetivo-{{ objetivo.id }}">
+                                <td><button class="toggle-row">+</button></td>
+                                <td>{{ objetivo.id }}</td>
+                                <td>{{ objetivo.nombre }}</td>
+                                <td>{{ objetivo.responsable }}</td>
+                                <td>{{ objetivo.perspectiva }}</td>
+                                <td>{{ objetivo.fechaObjetivo|date:"d/m/Y" }}</td>
+                                <td>
+                                    <a href="{% url 'editar_objetivo' match.id objetivo.id %}">Editar</a>
+                                </td>
+                            </tr>
+                            <tr class="details-row" data-id="details-objetivo-{{ objetivo.id }}">
+                                <td colspan="8">
+                                    <div class="details-content">
+                                        <h4>Métricas</h4>
+                                        <a href="{% url 'crear_metrica' objetivo.id %}" class="button">Crear Métrica</a>
+                                        <table class="nested-table">
+                                            <thead>
+                                                <tr>
+                                                    <th></th>
+                                                    <th>Id</th>
+                                                    <th>Nombre</th>
+                                                    <th>Valor Inicial</th>
+                                                    <th>Valor Deseado</th>
+                                                    <th>Periodo</th>
+                                                    <th>Opciones</th>
+                                                    <th>Evaluaciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {% for metrica in objetivo.metrica_set.all %}
+                                                <tr class="metrica-row" data-id="metrica-{{ metrica.id }}">
+                                                    <td><button class="toggle-row">+</button></td>
+                                                    <td>{{ metrica.id }}</td>
+                                                    <td>{{ metrica.nombre }}</td>
+                                                    <td>{{ metrica.valorInicial }}</td>
+                                                    <td>{{ metrica.valorDeseado }}</td>
+                                                    <td>{{ metrica.periodo }}</td>
+                                                    <td>
+                                                        <a href="{% url 'editar_metrica' objetivo.id metrica.id %}">Editar</a>
+                                                    </td>
+                                                    <td style="display: flex; gap: 3px;">
+                                                        {% for evaluacion in metrica.evaluacion_set.all|dictsort:"fecha" %}
+                                                        
+                                                           
+                                                           <a href="{% url 'verevaluacion' evaluacion.id %}">{{ evaluacion.fecha|date:"d/m/y" }}<br>Valor: {{ evaluacion.valor }}</a>
+                                                            
+                                                        {% endfor %}
+                                                        <a href="{% url 'crear_evaluacion' metrica.id %}" class="button">Evaluar</a>
+                                                    </td>
+                                                </tr>
+                                                <tr class="details-row">
+                                                    <td colspan="8">
+                                                        <div class="details-content nested-content">
+                                                            <h5>Actividades</h5>
+                                                            <a href="{% url 'crear_actividad' metrica.id %}" class="button">Crear Actividad</a>
+                                                            <table class="nested-table">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th>Nombre</th>
+                                                                        <th>Responsable</th>
+                                                                        <th>Fecha Creacion</th>
+                                                                        <th>Fecha Realizacion</th>
+                                                                        <th>Estado</th>
+                                                                        <th>Descripcion</th>
+                                                                        <th>Opciones</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    {% for actividad in metrica.actividad_set.all %}
+                                                                    <tr>
+                                                                        <td>{{ actividad.nombre }}</td>
+                                                                        <td>{{ actividad.responsable }}</td>
+                                                                        <td>{{ actividad.fechaCreacion|date:"d/m/Y" }}</td>
+                                                                        <td>{{ actividad.fechaRealizado|date:"d/m/Y" }}</td>
+                                                                        <td>{{ actividad.estado }}</td>
+                                                                        <td>{{ actividad.descripcion }}</td>
+                                                                        <td>
+                                                                            <a href="{% url 'editar_actividad' metrica.id actividad.id %}">Editar</a>
+                                                                        </td>
+                                                                    </tr>
+                                                                    {% endfor %}
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </td>
+                                                </tr>   
+
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="8">No hay desafíos disponibles.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<link rel="stylesheet" href="{% static 'css/matches.css' %}">
+{% endblock %}

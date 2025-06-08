@@ -1,0 +1,82 @@
+{% extends 'admin.html' %}
+
+{% block title %}Crear Usuario Ejecutivo | NODO{% endblock %}
+
+{% block content %}
+<div class="section-header">
+    <h1>Crear Usuario Ejecutivo</h1>
+</div>
+
+<div class="form-container">
+    <form method="post">
+        {% csrf_token %}
+        
+        <div class="form-group">
+            <label for="id_username">Nombre de usuario:</label>
+            {{ form.username }}
+            {% if form.username.errors %}
+            <div class="error-message">{{ form.username.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label for="id_email">Correo electrónico:</label>
+            {{ form.email }}
+            {% if form.email.errors %}
+            <div class="error-message">{{ form.email.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label for="id_nombre_completo">Nombre completo:</label>
+            {{ form.nombre_completo }}
+            {% if form.nombre_completo.errors %}
+            <div class="error-message">{{ form.nombre_completo.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label for="id_cargo">Cargo:</label>
+            {{ form.cargo }}
+            {% if form.cargo.errors %}
+            <div class="error-message">{{ form.cargo.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label for="id_telefono">Teléfono:</label>
+            {{ form.telefono }}
+            {% if form.telefono.errors %}
+            <div class="error-message">{{ form.telefono.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label for="id_password1">Contraseña:</label>
+            {{ form.password1 }}
+            {% if form.password1.errors %}
+            <div class="error-message">{{ form.password1.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label for="id_password2">Confirmar contraseña:</label>
+            {{ form.password2 }}
+            {% if form.password2.errors %}
+            <div class="error-message">{{ form.password2.errors }}</div>
+            {% endif %}
+        </div>
+        
+        {% if form.non_field_errors %}
+        <div class="error-message">
+            {{ form.non_field_errors }}
+        </div>
+        {% endif %}
+        
+        <div class="form-actions">
+            <button type="submit" class="btn-primary">Crear Usuario</button>
+            <a href="{% url 'gestionar_usuarios' %}" class="btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+{% endblock %}

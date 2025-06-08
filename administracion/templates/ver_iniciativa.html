@@ -1,0 +1,90 @@
+{% extends 'admin.html' %}
+{% load static %}
+{% block content %}
+    <link rel="stylesheet" href="{% static 'css/ver.css' %}">
+    <h1>Iniciativa {{iniciativa.id}}</h1>
+    <a href="{% url 'verpostulacion_i' id=iniciativa.postulacion.id %}"> Ver postulacion#{{iniciativa.postulacion.id}}</a>
+    <div class="container-ver">
+
+        
+
+        <div class="cuadro empresa">
+            <h2>Empresa</h2>
+            <p><b>Nombre:</b> {{ iniciativa.empresa.nombre }}</p>
+            <p><b>Cantidad de personas:</b> {{ iniciativa.empresa.cantidadPersonas }}</p>
+            <p><b>Año:</b> {{ iniciativa.empresa.año }}</p>
+            <p><b>Actividad:</b> {{ iniciativa.empresa.actividad }}</p>
+            <p><b>País:</b> {{ iniciativa.empresa.pais }}</p>
+            <p><b>Ciudad:</b> {{ iniciativa.empresa.ciudad }}</p>
+        </div>
+        <div class="cuadro postulacion">
+            <h2>Detalles de la iniciativa</h2>
+            <p><b>Fecha:</b> {{ iniciativa.postulacion.fecha }}</p>
+            <p><b>Titulo:</b> {{ iniciativa.titulo }}</p>
+            <p><b>Descripcion:</b> {{ iniciativa.descripcion }}</p>
+            <p><b>Preevaluación:</b> {{ iniciativa.preevaluacion }}</p>
+            <p><b>Recomendacion:</b> {{iniciativa.recomendacion }}</p>
+            <p><b>Madurez:</b> {{ iniciativa.madurez }}</p>
+            <p><b>Comite:</b> {{ iniciativa.comite }}</p>
+            <p><b>Postulacion:</b> {{ iniciativa.postulacion.titulo }}</p>
+            <p><b>Empresa:</b> {{ iniciativa.empresa.nombre }}</p>
+            <p><b>Contacto:</b> {{ iniciativa.contacto }}</p>
+            <p><b>Ejecutivo:</b> {{ iniciativa.ejecutivo }}</p>
+            <p><b>Desafio:</b> {{ iniciativa.desafio.nombreDesafio }}</p>
+        </div>
+        
+        
+        
+        <div class="cuadro postulacion">
+            <h2>Detalles de la postulación</h2>
+            <p><b>Fecha:</b> {{ iniciativa.postulacion.fecha }}</p>
+            <p><b>Titulo:</b> {{ iniciativa.postulacion.titulo }}</p>
+            <p><b>Descripcion:</b> {{ iniciativa.postulacion.descripcion }}</p>
+            <p><b>Presencia en Latinoamerica:</b> {{ iniciativa.postulacion.latam }}</p>
+            <p><b>Enlace a video:</b> {{iniciativa.postulacion.video }}</p>
+            <p><b>Como se diferencia:</b> {{ iniciativa.postulacion.diferenciacion }}</p>
+            <p><b>Traccion:</b> {{ iniciativa.postulacion.traccion }}</p>
+            <p><b>Piloto:</b> {{ iniciativa.postulacion.piloto }}</p>
+            <p><b>Desafio:</b> {{ iniciativa.postulacion.desafio }}</p>
+            <p><b>Origen:</b> {{ iniciativa.postulacion.origen }}</p>
+            <p><b>Estado:</b> {{ iniciativa.postulacion.estado }}</p>
+            <p><b>Pregunta:</b> {{ iniciativa.postulacion.pregunta }}</p>
+        </div>
+        <div class="cuadro contacto">
+            <h2>Contacto</h2>
+            <p><b>Nombre:</b> {{ iniciativa.contacto.nombre }}</p>
+            <p><b>Cargo:</b> {{ iniciativa.contacto.cargo }}</p>
+            <p><b>Correo:</b> {{ iniciativa.contacto.correo }}</p>
+            <p><b>Teléfono:</b> {{ iniciativa.contacto.telefono }}</p>
+        </div>
+        
+        <div class="cuadro documentos">
+            <h2>Documentos</h2>
+            {% if documentos %}
+                <ul>
+                    {% for documento in documentos %}
+                        <li>
+                            <a href="{% url 'serve_document' documento.archivo.name|slice:'11:' %}" target="_blank">
+                                {{ documento.nombre }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No hay documentos asociados a este desafío.</p>
+            {% endif %}
+        </div>
+        <div class="cuadro imagen">
+            <h2>Presentacion:</h2>
+            {% if iniciativa.presentacion %}
+            <a href="{{ iniciativa.presentacion.url }}" target="_blank" rel="noopener noreferrer">
+                {{ iniciativa.presentacion.url }}
+            </a>
+                
+            
+            {% else %}
+                <p> No tiene presentacion</p>
+            {% endif %}
+        </div>
+    </div>  
+{% endblock %}

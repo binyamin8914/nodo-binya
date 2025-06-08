@@ -1,0 +1,49 @@
+{% extends "admin.html" %}
+
+{% block title %}Solicitudes Recibidas{% endblock %}
+
+{% block content %}
+<div class="panel" style="
+    background-color: white;
+    border-radius: 16px;
+    padding: 45px 50px;
+    width: 100%;
+    max-width: 600px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    margin: auto;
+">
+    <h2 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 10px; color: #1e293b;">
+        Solicitudes Recibidas
+    </h2>
+
+    {% if messages %}
+        {% for m in messages %}
+            <div class="message" style="
+                background-color: #e6f3ff;
+                padding: 10px;
+                border-radius: 8px;
+                margin-bottom: 15px;
+                color: #1e293b;
+            ">{{ m }}</div>
+        {% endfor %}
+    {% endif %}
+
+    {% if solicitudes %}
+        {% for solicitud in solicitudes %}
+            <div style="margin-bottom: 25px;">
+                <h3>{{ solicitud.match.desafio.nombreDesafio }}</h3>
+                <p><strong>Solicitante:</strong> {{ solicitud.solicitante.get_full_name|default:solicitud.solicitante.email }}</p>
+                <p><strong>Fecha propuesta:</strong> {{ solicitud.fecha_propuesta }}</p>
+                <p><strong>Estado:</strong> {{ solicitud.get_estado_display }}</p>
+                <a href="{% url 'reuniones:responder_solicitud' solicitud_id=solicitud.id %}" style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px;">
+                    Responder
+                </a>
+            </div>
+            <hr>
+        {% endfor %}
+    {% else %}
+        <p>No hay solicitudes pendientes.</p>
+    {% endif %}
+</div>
+{% endblock %}

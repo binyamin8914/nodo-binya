@@ -1,0 +1,72 @@
+{% extends 'admin.html' %}
+
+{% load static %}
+
+{% block content %}
+<h1>Iniciativas depuradas</h1>
+
+<!-- Formulario de búsqueda -->
+<form method="get" action="" class="buscador">
+    <input type="text" name="q" placeholder="Buscar por titulo empresa o desafio ..." value="{{ query }}">
+    <button type="submit">Buscar</button>
+</form>
+
+
+<table border="1" cellpadding="10" cellspacing="0">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Titulo</th>
+            <th>Empresa</th>
+            <th>Desafio</th>
+            <th>Madurez</th>
+            <th>Opciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for iniciativa in iniciativas %}
+        <tr>
+            <td>{{ iniciativa.id }}</td>
+            <td>{{ iniciativa.titulo }}</td>
+            <td>{{ iniciativa.empresa.nombre }}</td>
+            <td>{{ iniciativa.desafio }}</td>
+            <td>{{ iniciativa.madurez }}</td>
+            <td>
+                <a href="{% url 'veriniciativa' id=iniciativa.id %}">Ver</a>
+                <button type="button" onclick="eliminarIniciativa({{ iniciativa.id }})">Eliminar</button>
+
+                <script>
+                    function eliminarIniciativa(id) {
+                        if (confirm("¿Estás seguro de que deseas eliminar esta iniciativa?")) {
+                            fetch("{% url 'eliminarIniciativa' 0 %}".replace('0', id), {
+                                method: "POST",
+                                headers: {
+                                    "X-CSRFToken": "{{ csrf_token }}",
+                                    "Content-Type": "application/json"
+                                },
+                                body: JSON.stringify({})
+                            }).then(response => {
+                                if (response.ok) {
+                                    location.reload(); 
+                                    alert("Eliminado correctamente") // Recargar la página después de eliminar
+                                } else {
+                                    alert("Error al eliminar la iniciativa");
+                                }
+                            });
+                        }
+                    }
+                </script>
+
+                <a href="{% url 'depurar_iniciativa' id=iniciativa.postulacion.id %}">Editar</a>
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="7">No hay desafíos disponibles.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<button type="submit" id="saveChangesBtn" style="display: none;">Guardar cambios</button>
+
+{% endblock %}

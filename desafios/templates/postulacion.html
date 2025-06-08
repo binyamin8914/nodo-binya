@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/postulacion.css' %}">
+{% endblock %} 
+
+{%block content%}
+    <div class="content">
+        
+        <div class="formulario">
+            {% block formulario %}
+            {%endblock%}
+        </div>
+        <div class="texto">
+            <h1>Postulacion NODO</h1>
+            <p class="text">NODO Centro de Innovación de la OMCPL, nace como respuesta a los cientos de desafíos que ha conocido la Organización a lo largo de todos estos años, y las miles de ideas, propuestas, prototipos y soluciones, que se implementan día a día, en de forma aislada y con altos potenciales de dar solución a muchas personas, sin tener visibilidad.
+
+            Estamos Felices!! porque este es el inicio de un trabajo colaborativo e innovación de toda la OMCPL con los diferentes países, instituciones, empresas, startups, universidades, académicos y expertos que nos relacionamos constantemente.
+                
+            Esta postulación es el proceso inicial para lograr entender muy bien el desafío que busca abordar, y comenzar el camino para conectar con las mejores propuestas de solución para tu desafío.</p> 
+            <a class="view-more">Ver más</a>
+            <script src="{% static 'js/postulacion.js' %}"></script>
+
+        </div>
+    </div>
+{%endblock%}

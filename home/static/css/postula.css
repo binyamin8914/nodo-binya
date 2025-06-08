@@ -1,0 +1,85 @@
+body{
+    background: linear-gradient(130deg,  #2525a5,#009ef3);
+}
+.container_postula {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.section {
+    margin-top: 50px;
+    min-height: 280px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 45%;
+    height: max-content;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.section:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Estilos específicos para la sección de Desafío */
+.desafio {
+    border: 2px solid #2D2DB9;
+}
+
+.desafio h2 {
+    color: #2D2DB9;
+}
+
+.desafio .btn {
+    background-color: #2D2DB9;
+    color: #fff;
+}
+
+/* Estilos específicos para la sección de Solución */
+.solucion {
+    border: 2px solid #2db934;
+}
+
+.solucion h2 {
+    color: #2db934;
+}
+
+.solucion .btn {
+    background-color: #2db934;
+    color: #fff;
+}
+
+/* Estilos para el botón */
+.btn {
+    text-decoration: none;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+    opacity: 0.9;
+}
+
+@media (max-width: 768px) {
+    .container_postula {
+        flex-direction: column;
+    }
+
+    .section {
+        width: 100%;
+        margin-bottom: 20px;
+        min-height: auto;
+        margin-top: 0px;
+    }
+}

@@ -1,0 +1,79 @@
+{% extends "admin.html" %}
+
+{% block title %}Detalle de la Reunión{% endblock %}
+
+{% block content %}
+<div class="panel" style="
+    background-color: white;
+    border-radius: 16px;
+    padding: 45px 50px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    margin: auto;
+">
+    <div class="nav-links" style="margin-bottom: 20px; text-align: left;">
+        {% if user.tipo == 'ejecutivo' %}
+            <a href="{% url 'reuniones:listar_reuniones_ejecutivo' %}" style="color:#4361ee;font-weight:600;">Volver</a>
+        {% elif user.tipo == 'contacto' %}
+            <a href="{% url 'reuniones:listar_reuniones' %}" style="color:#4361ee;font-weight:600;">Volver</a>
+        {% else %}
+            <a href="{% url 'reuniones:home' %}" style="color:#4361ee;font-weight:600;">Volver</a>
+        {% endif %}
+    </div>
+
+    <h2 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 20px; color: #1e293b;">
+        Detalle de la Reunión
+    </h2>
+
+    <p style="font-size: 1rem; margin-bottom: 10px; color: #475569; text-align: left;">
+        <strong>Desafío:</strong> {{ reunion.match.desafio.nombreDesafio }}
+    </p>
+    <p style="font-size: 1rem; margin-bottom: 10px; color: #475569; text-align: left;">
+        <strong>Fecha:</strong> {{ reunion.fecha|date:"d/m/Y H:i" }}
+    </p>
+    <p style="font-size: 1rem; margin-bottom: 10px; color: #475569; text-align: left;">
+        <strong>Duración:</strong> {{ reunion.duracion }} minutos
+    </p>
+    <p style="font-size: 1rem; margin-bottom: 10px; color: #475569; text-align: left;">
+        <strong>Motivo:</strong> {{ reunion.motivo|default:"Sin descripción" }}
+    </p>
+
+    {% if reunion.link_meet %}
+        <p style="font-size: 1rem; margin-bottom: 10px; color: #475569; text-align: left;">
+            <strong>Enlace Meet:</strong>
+            <a href="{{ reunion.link_meet }}" target="_blank" style="color:#4361ee;">
+                {{ reunion.link_meet }}
+            </a>
+        </p>
+    {% elif not reunion.google_event_id and google_conectado %}
+        <p style="font-size: 1rem; margin-bottom: 10px; color: #92400e; background: #fef9c3; padding: 8px; border-radius: 8px;">
+            <em>Enlace Meet no disponible. Conecte Google Calendar para generarlo.</em>
+        </p>
+    {% endif %}
+
+    <h3 style="font-size: 1.2rem; text-align: left; color: #1e293b; margin-top: 20px;">Participantes:</h3>
+    <ul style="text-align: left;">
+        {% for participante in participantes %}
+            <li>
+                {{ participante.nombre|default:participante.email }}
+                {% if participante.es_invitado_externo %}<span style="color:#64748b;">(Invitado externo)</span>{% endif %}
+            </li>
+        {% endfor %}
+    </ul>
+
+    {% if es_organizador %}
+        <a href="{% url 'reuniones:editar_reunion' reunion_id=reunion.id %}"
+           class="btn"
+           style="display: inline-block; padding: 10px 20px; margin-top: 10px; color: white; text-decoration: none; border-radius: 5px; background-color: #4361ee; margin-right: 8px;">
+           Editar
+        </a>
+        <a href="{% url 'reuniones:eliminar_reunion' reunion_id=reunion.id %}"
+           class="btn"
+           style="display: inline-block; padding: 10px 20px; margin-top: 10px; color: white; text-decoration: none; border-radius: 5px; background-color: #dc3545;">
+           Eliminar
+        </a>
+    {% endif %}
+</div>
+{% endblock %}

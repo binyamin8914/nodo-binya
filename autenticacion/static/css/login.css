@@ -1,0 +1,161 @@
+body {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  margin: 0;
+  padding: 20px;
+  background: linear-gradient(135deg, #2d2db9, #009ef3);
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #333;
+  gap: 10%;
+}
+.logo img {
+  width: 400px;
+}
+.logincontainer {
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.logincontainer h1 {
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  color: #01014b;
+}
+
+.logincontainer form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.logincontainer label {
+  text-align: left;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.logincontainer input[type="text"],
+.logincontainer input[type="password"],
+.logincontainer input[type="email"] {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.8rem;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 1rem;
+  transition: border 0.3s ease;
+}
+
+.logincontainer input[type="text"]:focus,
+.logincontainer input[type="password"]:focus,
+.logincontainer input[type="email"]:focus {
+  border-color: #009ef3;
+  outline: none;
+}
+
+.logincontainer button {
+  padding: 0.8rem;
+  background: linear-gradient(135deg, #2d2db9, #009ef3);
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.logincontainer button:hover {
+  background: linear-gradient(135deg, #009ef3, #2d2db9);
+}
+
+/* Mensajes de error o éxito */
+.logincontainer ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 1rem;
+  color: #d9534f;
+  font-size: 0.9rem;
+}
+
+@media (max-width: 769px) {
+  body {
+    flex-direction: column-reverse;
+  }
+  .logincontainer {
+    width: auto;
+  }
+}
+@media (max-width: 427px) {
+  .logo img {
+    width: 200px;
+  }
+}
+
+/* cambios en el css para añadir el registro */
+.register-link {
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.register-link a {
+  color: #2d2db9;
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+.register-link a:hover {
+  color: #009ef3;
+}
+
+/* Estilos para mensajes de error en el formulario de registro */
+.error-messages {
+  margin-top: 1rem;
+  color: #d9534f;
+  font-size: 0.9rem;
+  text-align: left;
+}
+
+.error-message {
+  margin: 0.3rem 0;
+}
+
+.messages-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 1rem;
+}
+
+.message {
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  border-radius: 4px;
+}
+
+.message.success {
+  background-color: #dff0d8;
+  color: #3c763d;
+}
+
+.message.error {
+  background-color: #f2dede;
+  color: #a94442;
+}
+
+.message.warning {
+  background-color: #fcf8e3;
+  color: #8a6d3b;
+}
+
+.message.info {
+  background-color: #d9edf7;
+  color: #31708f;
+}

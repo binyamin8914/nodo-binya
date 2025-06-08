@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    {% load static %}
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Panel de Ejecutivo</title>
+    <link rel="stylesheet" href="{% static 'css/login.css' %}" />
+    <style>
+      .ejecutivo-badge {
+        background-color: #4caf50;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+        margin-bottom: 20px;
+        display: inline-block;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 50px auto;
+        padding: 30px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .user-info {
+        margin-bottom: 30px;
+      }
+
+      .user-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .btn {
+        display: inline-block;
+        padding: 10px 15px;
+        background-color: #007bff;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+        text-align: center;
+      }
+
+      .btn-admin {
+        background-color: #6c757d;
+      }
+
+      form button {
+        width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="ejecutivo-badge">Ejecutivo</div>
+
+      <div class="user-info">
+        <h1>Bienvenido, {{ request.user.username }}</h1>
+        <p>Panel de control para ejecutivos de NODO.</p>
+      </div>
+
+      <div class="user-actions">
+        <a href="{% url 'cambiar_password' %}" class="btn"
+          >Cambiar contraseña</a
+        >
+
+        {% if request.user.is_staff %}
+        <a href="/administracion/" class="btn btn-admin"
+          >Ir al Panel de Administración</a
+        >
+        {% endif %}
+
+        <form action="{% url 'logout' %}" method="post">
+          {% csrf_token %}
+          <button type="submit" class="btn">Cerrar sesión</button>
+        </form>
+      </div>
+
+      {% if messages %}
+      <ul class="messages-list">
+        {% for message in messages %}
+        <li class="message {% if message.tags %}{{ message.tags }}{% endif %}">
+          {{ message }}
+        </li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+    </div>
+  </body>
+</html>

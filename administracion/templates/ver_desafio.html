@@ -1,0 +1,76 @@
+{% extends 'admin.html' %}
+{% load static %}
+{% block content %}
+    <link rel="stylesheet" href="{% static 'css/ver.css' %}">
+    <h1>Desafio {{desafio.id}}</h1>
+    <a href="{% url 'verpostulacion' id=desafio.postulacion.id %}"> Ver postulacion#{{desafio.postulacion.id}}</a>
+    <div class="container-ver">
+
+        
+
+        <div class="cuadro empresa">
+            <h2>Empresa</h2>
+            <p><b>Nombre:</b> {{ desafio.empresa.nombre }}</p>
+            <p><b>Cantidad de personas:</b> {{ desafio.empresa.cantidadPersonas }}</p>
+            <p><b>Año:</b> {{ desafio.empresa.año }}</p>
+            <p><b>Actividad:</b> {{ desafio.empresa.actividad }}</p>
+            <p><b>País:</b> {{ desafio.empresa.pais }}</p>
+            <p><b>Ciudad:</b> {{ desafio.empresa.ciudad }}</p>
+        </div>
+        
+        <div class="cuadro contacto">
+            <h2>Contacto</h2>
+            <p><b>Nombre:</b> {{ desafio.contacto.nombre }}</p>
+            <p><b>Cargo:</b> {{ desafio.contacto.cargo }}</p>
+            <p><b>Correo:</b> {{ desafio.contacto.correo }}</p>
+            <p><b>Teléfono:</b> {{ desafio.contacto.telefono }}</p>
+        </div>
+        
+        <div class="cuadro postulacion">
+            <h2>Detalles de el desafio</h2>
+            <p><b>Ejecutivo:</b> {{ desafio.ejecutivo }}</p>
+            <p><b>Fecha:</b> {{ desafio.fecha }}</p>
+            <p><b>Nombre:</b> {{ desafio.nombreDesafio }}</p>
+            <p><b>Web de la empresa:</b> {{ desafio.webEmpresa }}</p>
+            <p><b>A quienes impacta:</b> {{ desafio.impactoProblema }}</p>
+            <p><b>Efecto de la operacion:</b> {{ desafio.efectoOperacion }}</p>
+            <p><b>Descripcion del desafio:</b> {{ desafio.descripcionDesafio }}</p>
+            <p><b>Costo oportunidad:</b> {{ desafio.costoOportunidad }}</p>
+            <p><b>Intentos previos de solucion:</b> {{ desafio.intentosPreviosSolucion }}</p>
+            <p><b>Ventas mes USD :</b> {{ desafio.ventasMesUsd }}</p>
+
+            <p><b>Margen bruto:</b> {{ desafio.margenBruto }}</p>
+
+            <p><b>Ebitda:</b> {{ desafio.ebitda }}</p>
+            <p><b>Cantidad de clientes:</b> {{ desafio.cantidadClientes }}</p>
+
+
+
+        </div>
+        
+        <div class="cuadro documentos">
+            <h2>Documentos</h2>
+            {% if documentos %}
+                <ul>
+                    {% for documento in documentos %}
+                        <li>
+                            <a href="{% url 'serve_document' documento.archivo.name|slice:'11:' %}" target="_blank">
+                                {{ documento.nombre }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No hay documentos asociados a este desafío.</p>
+            {% endif %}
+        </div>
+        <div class="cuadro imagen">
+            <h2>Portada:</h2>
+            {% if desafio.imagen %}
+                <p> <img src="{{ desafio.imagen.url }}"></img></p>
+            {% else %}
+                <p> No tiene imagen</p>
+            {% endif %}
+        </div>
+    </div>  
+{% endblock %}

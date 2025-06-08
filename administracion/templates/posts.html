@@ -1,0 +1,58 @@
+{% extends 'admin.html' %}
+
+{%load static %}
+
+
+{% block content %}
+<form method="POST" action="{% url 'actualizar_check_masivo_post' %}">
+    <script src="{% static 'js/check.js' %}"></script>
+    {% csrf_token %}
+    <h1>Posts</h1>
+        <table border="1" cellpadding="10" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Titulo</th>
+                    <th>Fecha</th>
+                    <th>Autor</th>
+                    <th>Publico</th>
+                    <th>Opciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for post in posts %}
+                <tr>
+                    <td>{{ post.id }}</td>
+                    <td>{{ post.titulo }}</td>
+                    <td>{{ post.fecha }}</td>
+                    <td>{{ post.autor }}</td>
+                    <td>
+                        <input 
+                            type="checkbox" 
+                            name="publico_{{ post.id }}" 
+                            class="checkbox-trigger"
+                            {% if post.publico %}checked{% endif %}
+                        >
+                    </td>
+                    <td>
+                        <a href="{% url 'post_preview' slug=post.slug %}">Vista previa</a>
+                        <a href="{% url 'editar_post' id=post.id %}">Editar</a>
+                        <form method="post" action="{% url 'eliminarPost' id=post.id %}" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" onclick="return confirm('¿Estás seguro de que deseas eliminar este post?');">
+                                Eliminar
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6">No hay posts disponibles.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </form>
+    <button type="submit" id="saveChangesBtn" style="display: none;">Guardar cambios</button>
+</form>
+{% endblock %}

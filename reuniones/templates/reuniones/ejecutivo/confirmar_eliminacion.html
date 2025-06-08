@@ -1,0 +1,74 @@
+{% extends "admin.html" %}
+
+{% block title %}Confirmar Eliminación{% endblock %}
+
+{% block content %}
+<div class="panel" style="
+    background-color: white;
+    border-radius: 16px;
+    padding: 45px 50px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    margin: auto;
+">
+    <h2 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 10px; color: #1e293b;">
+        Confirmar Eliminación
+    </h2>
+
+    <p style="font-size: 1rem; margin-bottom: 15px; color: #475569;">
+        ¿Estás seguro de que deseas eliminar la reunión?
+    </p>
+    <p style="font-size: 1rem; margin-bottom: 15px; color: #475569;">
+        <strong>{{ reunion.match.desafio.nombreDesafio }}</strong>
+    </p>
+    <p style="font-size: 1rem; margin-bottom: 15px; color: #475569;">
+        Fecha: {{ reunion.fecha }}
+    </p>
+
+    {% if messages %}
+        {% for m in messages %}
+            <div class="message" style="
+                background-color: #e6f3ff;
+                padding: 10px;
+                border-radius: 8px;
+                margin-bottom: 15px;
+                color: #1e293b;
+            ">{{ m }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="post" style="margin-bottom: 20px;">
+        {% csrf_token %}
+        <input type="submit" value="Eliminar" style="
+            width: 100%;
+            padding: 15px;
+            font-size: 1rem;
+            font-weight: 600;
+            background-color: #f87171;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-bottom: 10px;
+        ">
+        <a href="{% url 'reuniones:listar_reuniones_ejecutivo' %}" class="menu-btn" style="
+            display: inline-block;
+            width: 100%;
+            padding: 15px;
+            font-size: 1rem;
+            font-weight: 600;
+            background-color: #f1f5f9;
+            border: none;
+            border-radius: 10px;
+            text-decoration: none;
+            color: #1e293b;
+            transition: background 0.3s ease;
+        ">
+            <span class="emoji">🔙</span> Cancelar
+        </a>
+    </form>
+</div>
+{% endblock %}

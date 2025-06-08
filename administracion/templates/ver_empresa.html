@@ -1,0 +1,26 @@
+{% extends 'admin.html' %}
+{% load static %}
+{% block content %}
+    <link rel="stylesheet" href="{% static 'css/ver.css' %}">
+    <h1>Empresa {{empresa.id}}</h1>
+    <div class="container-ver">
+        <div class="cuadro empresa">
+            <h2>Empresa</h2>
+            <p><b>Nombre:</b> {{ empresa.nombre }}</p>
+            <p><b>Cantidad de personas:</b> {{ empresa.cantidadPersonas }}</p>
+            <p><b>Año:</b> {{ empresa.año }}</p>
+            <p><b>Actividad:</b> {{ empresa.actividad }}</p>
+            <p><b>País:</b> {{ empresa.pais }}</p>
+            <p><b>Ciudad:</b> {{ empresa.ciudad }}</p>
+        </div>
+        <div class="cuadro contacto">
+            <h2>Contactos</h2>
+            {%for contacto in contactos%}
+                <p><b>{{ contacto.nombre }}</b> </p>
+                <small><b>Cargo:</b> {{ contacto.cargo }}</small>
+                <small><b>Correo:</b> {{ contacto.correo }}</small>
+                <small><b>Teléfono:</b> {{ contacto.telefono }}</small>
+            {%endfor%}
+        </div>
+    </div>  
+{% endblock %}

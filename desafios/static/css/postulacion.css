@@ -1,0 +1,120 @@
+h1,h2,h3,p,small,label{
+    color: #01014B;
+}
+.content {
+    display: flex;
+    gap: 20px; 
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+.texto{
+    width: 50%;
+    padding-inline: 7%;
+}
+.view-more{
+    display: none;
+    float:right;
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 14px;
+}
+.formulario {
+    flex-grow: 1;
+    background-color: #FFFFFF;
+    padding-inline: 40px;
+    padding-bottom: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group img{
+    width:70px;
+}
+
+form label {
+    font-weight: 500;
+    font-size: 0.9rem;
+    color: #01014B;
+}
+
+form input, form textarea, form select {
+    padding: 12px;
+    border: 1px solid #E0E0E0;
+    border-radius: 8px;
+    font-size: 14px;
+    background-color: #F9F9F9;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    width: 100%;
+}
+
+form input:focus, form textarea:focus, form select:focus {
+    border-color: #007BFF;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+    outline: none;
+}
+.buttons {
+    display: flex;
+    justify-content: space-between;
+}
+button,.button {
+    text-decoration: none;
+    padding: 12px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    background-color: #01014B;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    align-self: flex-end;
+}
+
+button:hover {
+    background-color: #007BFF;
+}
+@media (max-width: 758px){
+    .content{
+        flex-direction: column-reverse;
+    }
+    .texto{
+        width: 100%;
+        padding-inline: 4%;
+    }    
+    .text.expandido {
+        -webkit-line-clamp: unset; 
+    }
+    
+    .text{
+        transition: max-height 0.5s ease, -webkit-line-clamp 0.5s ease;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+    .view-more{
+        display: block;
+    }
+    .formulario{
+        padding-inline: 4%;
+    }
+    form textarea{
+        height: 120px;
+    }
+    .inputtexto{
+        height:60px;    
+    }
+}

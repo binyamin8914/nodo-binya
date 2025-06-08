@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-LRGB0E3W5B"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-LRGB0E3W5B');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}NODO{% endblock %}</title>
+    <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <div class="wrapper">
+        <header>
+            <div class="container">
+                <div class="logo">
+                    <a href="{% url 'home' %}">
+                        <img src="{% static 'img/logo_NODO.png' %}" alt="Logo NODO">
+                    </a>                
+                </div>
+                <nav class="menu">
+                    <ul>
+                        <li><a href="{% url 'home' %}">Inicio</a></li>
+                        <li><a href="{% url 'blog' %}">Blog</a></li>
+                        <li><a href="{% url 'contacto' %}">Contacto</a></li>
+                        
+                    </ul>
+                </nav>
+                
+                <a href="{% url 'postula' %}" class="right-button postula" >Postula aquí</a>
+                <a href="{% url 'login' %}" class="right-button acceder" >Iniciar Sesión</a>
+
+                <button id="menu-toggle" class="menu-button">☰</button>
+                
+                <nav id="sidebar" class="sidebar">
+                    <ul>
+                        <li><a href="{% url 'login' %}">Iniciar Sesión</a></li>
+                        <li><a href="{% url 'home' %}">Inicio</a></li>
+                        <li><a href="{% url 'blog' %}">Blog</a></li>
+                        <li><a href="{% url 'contacto' %}">Contacto</a></li>
+                    </ul>
+                </nav>
+                <script src="{% static 'js/base.js' %}"></script>
+            </div>  
+            
+            
+            
+        
+            
+        </header>
+        <main>
+            {% block content %}
+            {% endblock %}
+        </main>
+
+        <footer class="footer"  id="footer">
+            <div class="footer-logos">
+                <a href="https://omcpl.org/logistica-justa/" target="_blank" rel="noopener noreferrer">
+                    <img class="logo"src="{% static 'img/Fair logistic blanco.png' %}" alt="Fair Logistics Logo">
+                </a >
+                <a href="https://camiongo.com/" target="_blank" rel="noopener noreferrer">
+                    <img class="logo"src="{% static 'img/Logo-CamionGo-2019-Blanco.png' %}" alt="CamionGO Logo">  
+                </a>
+                <a href="https://www.omcpl.org/" target="_blank" rel="noopener noreferrer">
+                    <img class="logo OMCPL"src="{% static 'img/OMCPL_logo.png' %}" alt="OMCPL Logo">  
+                </a>
+            </div>
+            <div class="divider"></div>
+            <div class="GOxT">
+                <small>Copyright © 2025</small>
+                <img class="GOxT_logo"src="{% static 'img/GOxT Blanco.png' %}" alt="GOxT"> 
+                
+            </div> 
+        </footer>
+        
+    </div>  
+    
+</body>
+</html>

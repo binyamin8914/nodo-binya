@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {% load static %} {% block head %}{% endblock %}
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}NODO{% endblock %}</title>
+    <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon" />
+    <link rel="stylesheet" href="{% static 'css/administracion.css' %}" />
+    <script src="{% static 'js/admin.js' %}"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="admin_container">
+      <aside class="sidebar">
+        <a href="{% url 'home' %}">
+          <img
+            class="logo_sidebar"
+            src="{% static 'img/logo_NODO.png' %}"
+            alt="Logo NODO"
+          />
+        </a>
+
+        <ul>
+          <h2 onclick="toggleMenu(this)">Dashboard</h2>
+          <div class="submenu">
+            <li>
+              <a
+                href="{% url 'metabase' %}"
+                class="{% if active_page == 'metabase' %}active{% endif %}"
+              >
+                Dashboard
+              </a>
+            </li>
+          </div>
+          <h2 onclick="toggleMenu(this)">Proyectos</h2>
+          <div class="submenu">
+            <li>
+              <a
+                href="{% url 'matches' %}"
+                class="{% if active_page == 'matches' %}active{% endif %}"
+              >
+                Proyectos (matches)
+              </a>
+              <a
+                href="{% url 'crear_match' 0 0 %}"
+                class="{% if active_page == 'crear_match' %}active{% endif %}"
+              >
+                Crear match de proyecto
+              </a>
+            </li>
+          </div>
+
+          <h2 onclick="toggleMenu(this)">Desafios</h2>
+          <div class="submenu">
+            <li>
+              <a
+                href="{% url 'postulaciones_desafios' %}"
+                class="{% if active_page == 'postulacionesDesafios' %}active{% endif %}"
+              >
+                Postulaciones
+              </a>
+            </li>
+
+            <li>
+              <a
+                href="{% url 'desafios' %}"
+                class="{% if active_page == 'desafios' %}active{% endif %}"
+              >
+                Depurados
+              </a>
+            </li>
+          </div>
+
+          <h2 onclick="toggleMenu(this)">Iniciativas</h2>
+          <div class="submenu">
+            <li>
+              <a
+                href="{% url 'postulaciones_iniciativas' %}"
+                class="{% if active_page == 'postulacionesIniciativas' %}active{% endif %}"
+              >
+                Postulaciones
+              </a>
+            </li>
+
+            <li>
+              <a
+                href="{% url 'iniciativas' %}"
+                class="{% if active_page == 'iniciativas' %}active{% endif %}"
+              >
+                Depuradas
+              </a>
+            </li>
+          </div>
+
+          <h2 onclick="toggleMenu(this)">Empresas</h2>
+          <div class="submenu">
+            <li>
+              <a
+                href="{% url 'empresas' %}"
+                class="{% if active_page == 'empresas' %}active{% endif %}"
+              >
+                Empresas
+              </a>
+            </li>
+          </div>
+
+          <h2 onclick="toggleMenu(this)">Blog</h2>
+          <div class="submenu">
+            <li>
+              <a
+                href="{% url 'crear_post'%}"
+                class="{% if active_page == 'crear_post' %}active{% endif %}"
+              >
+                Crear post
+              </a>
+              <a
+                href="{% url 'posts'%}"
+                class="{% if active_page == 'posts' %}active{% endif %}"
+              >
+                Posts
+              </a>
+            </li>
+          </div>
+
+          <h2 onclick="toggleMenu(this)">Solicitudes</h2>
+          <div class="submenu">
+            <li>
+              <a
+                href="{% url 'solicitudes_contacto'%}"
+                class="{% if active_page == 'solicitudes_contacto' %}active{% endif %}"
+              >
+                Contacto
+              </a>
+            </li>
+          </div>
+
+          <!-- SECCIÓN: REUNIONES -->
+          <h2 onclick="toggleMenu(this)">Reuniones</h2>
+          <div class="submenu">
+            {% if user.rol == "ejecutivo" %}
+              <li>
+                <a href="{% url 'reuniones:listar_matches_ejecutivo' %}" class="{% if active_page == 'listar_matches_ejecutivo' %}active{% endif %}">
+                  Listar matches
+                </a>
+              </li>
+              <li>
+                <a href="{% url 'reuniones:listar_reuniones_ejecutivo' %}" class="{% if active_page == 'listar_reuniones_ejecutivo' %}active{% endif %}">
+                  Reuniones agendadas
+                </a>
+              </li>
+              <li>
+                <a href="{% url 'reuniones:listar_solicitudes_ejecutivo' %}" class="{% if active_page == 'listar_solicitudes_ejecutivo' %}active{% endif %}">
+                  Solicitudes
+                </a>
+              </li>
+            {% elif user.rol == "contacto" %}
+              <li>
+                <a href="{% url 'reuniones:listar_matches' %}" class="{% if active_page == 'listar_matches' %}active{% endif %}">
+                  Listar matches
+                </a>
+              </li>
+              <li>
+                <a href="{% url 'reuniones:listar_reuniones' %}" class="{% if active_page == 'listar_reuniones' %}active{% endif %}">
+                  Reuniones agendadas
+                </a>
+              </li>
+              <li>
+                <a href="{% url 'reuniones:listar_solicitudes' %}" class="{% if active_page == 'listar_solicitudes' %}active{% endif %}">
+                  Solicitudes
+                </a>
+              </li>
+            {% endif %}
+          </div>
+
+          {% if user.is_superuser %}
+          <h2 onclick="toggleMenu(this)">Usuarios</h2>
+          <div class="submenu">
+            <li>
+              <a
+                href="{% url 'gestionar_usuarios'%}"
+                class="{% if active_page == 'usuarios' %}active{% endif %}"
+              >
+                Gestionar Ejecutivos
+              </a>
+            </li>
+          </div>
+          {% endif %}
+
+          <li class="logout">
+            <a href="{% url 'logout' %}">Cerrar sesión</a>
+          </li>
+        </ul>
+      </aside>
+
+      <main class="content">
+        {% block volver %}
+        <button class="volver" onclick="volver()">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            class="bi bi-arrow-left"
+            viewBox="0 0 16 16"
+          >
+            <path
+              fill-rule="evenodd"
+              d="M15 8a.5.5 0 0 1-.5.5H3.707l3.147 3.146a.5.5 0 0 1-.708.708l-4-4a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L3.707 7.5H14.5a.5.5 0 0 1 .5.5z"
+            />
+          </svg>
+        </button>
+        {% endblock %} {%block content%} {%endblock%}
+      </main>
+    </div>
+  </body>
+</html>

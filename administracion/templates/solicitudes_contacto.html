@@ -1,0 +1,46 @@
+{% extends 'admin.html' %}
+
+{% block content %}
+<h1 >Solicitud de contacto</h1>
+<table border="1" cellpadding="10" cellspacing="0">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Nombre</th>
+            <th>Cargo</th>
+            <th>Correo</th>
+            <th>Fecha</th>
+            <th>Empresa</th>
+            <th>Pais</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for solicitud in solicitudes %}
+        <tr>
+            <td>{{ solicitud.id }}</td>
+            <td>{{ solicitud.nombre }}</td>
+            <td>{{ solicitud.cargo }}</td>
+            <td>{{ solicitud.correo }}</td>
+            <td>{{ solicitud.fecha }}</td>
+            <td>{{ solicitud.empresa }}</td>
+            <td>{{ solicitud.pais }}</td>
+            <td>
+                <a href="{% url 'ver_solicitud' id=solicitud.id %}">Ver</a>
+                <form method="post" action="{% url 'eliminarSolicitud' id=solicitud.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" onclick="return confirm('¿Estás seguro de que deseas eliminar esta solicitud?');">
+                        Eliminar
+                    </button>
+                </form>
+            </td>
+            
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="5">No hay solicitudes disponibles.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

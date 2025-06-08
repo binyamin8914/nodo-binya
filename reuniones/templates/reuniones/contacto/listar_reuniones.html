@@ -1,0 +1,50 @@
+{% extends "admin.html" %}
+
+{% block title %}Mis Reuniones{% endblock %}
+
+{% block content %}
+<div class="panel" style="
+    background-color: white;
+    border-radius: 16px;
+    padding: 45px 50px;
+    width: 100%;
+    max-width: 600px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    margin: auto;
+">
+    <nav class="navbar" style="margin-bottom: 25px; text-align: left;">
+        <a class="nav-link" href="{% url 'reuniones:home' %}" style="color:#4361ee;font-weight:600;">Volver</a>
+    </nav>
+
+    <h1 style="font-weight: 800; color: #1e293b; margin-bottom: 30px;">Mis Reuniones</h1>
+
+    {% if messages %}
+        {% for m in messages %}
+            <div class="alert" style="background-color: #e6f3ff; padding: 10px; border-radius: 8px; margin-bottom: 15px; color: #1e293b; text-align: left;">{{ m }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="get" style="margin-bottom: 30px; text-align: left;">
+        {% for field in form %}
+            <label for="{{ field.id_for_label }}" style="font-weight: 600; color: #334155; display: block; margin-bottom: 6px;">{{ field.label }}</label>
+            {{ field }}
+        {% endfor %}
+        <button type="submit" style="width: 100%; padding: 15px; font-size: 1rem; font-weight: 600; background-color: #f1f5f9; border: none; border-radius: 10px; color: #1e293b; cursor: pointer; transition: background 0.3s ease;">Filtrar</button>
+    </form>
+
+    {% if reuniones %}
+        <div class="list-group" style="text-align: left;">
+            {% for reunion in reuniones %}
+                <a href="{% url 'reuniones:detalle_reunion' reunion_id=reunion.id %}" class="list-group-item" style="padding: 15px 20px; margin-bottom: 10px; background-color: #f8fafc; border-radius: 12px; text-decoration: none; color: #1e293b; display: block; border: 1px solid transparent; transition: background-color 0.3s ease, border-color 0.3s ease;">
+                    <h5 style="margin: 0 0 6px; font-weight: 700;">{{ reunion.match.desafio.nombreDesafio }}</h5>
+                    <p style="margin: 0; font-size: 0.9rem; color: #475569;">Fecha: {{ reunion.fecha|date:"d/m/Y H:i" }}</p>
+                    <p style="margin: 0; font-size: 0.9rem; color: #475569;">Tipo: {{ reunion.get_tipo_display }}</p>
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p style="color:#64748b;">No hay reuniones agendadas.</p>
+    {% endif %}
+</div>
+{% endblock %}

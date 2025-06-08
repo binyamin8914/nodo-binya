@@ -1,0 +1,58 @@
+{% extends "admin.html" %}
+
+{% block title %}Editar Reunión{% endblock %}
+
+{% block content %}
+<div class="panel" style="
+    background-color: white;
+    border-radius: 16px;
+    padding: 45px 50px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    margin: auto;
+">
+    <a href="{% url 'reuniones:listar_reuniones_ejecutivo' %}" style="text-decoration:none;color:#4361ee;font-weight:600;display:inline-block;margin-bottom:18px;">&larr; Volver a reuniones</a>
+    <h2 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 10px; color: #1e293b;">
+        Editar Reunión
+    </h2>
+
+    <p style="font-size: 1rem; margin-bottom: 15px; color: #475569; text-align: left;"><strong>{{ reunion.match.desafio.nombreDesafio }}</strong></p>
+
+    {% if messages %}
+        {% for m in messages %}
+            <div class="message" style="
+                background-color: #e6f3ff;
+                padding: 10px;
+                border-radius: 8px;
+                margin-bottom: 15px;
+                color: #1e293b;
+            ">{{ m }}</div>
+        {% endfor %}
+    {% endif %}
+
+    {% if form.errors %}
+        <div class="message" style="background-color:#fee2e2; color:#b91c1c; border-left:5px solid #b91c1c; margin-bottom: 20px;">
+            Por favor corrige los errores en el formulario.
+        </div>
+    {% endif %}
+
+    <form method="post" style="margin-bottom: 20px;">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Guardar Cambios" style="
+            width: 100%;
+            padding: 15px;
+            font-size: 1rem;
+            font-weight: 600;
+            background-color: #f1f5f9;
+            border: none;
+            border-radius: 10px;
+            color: #1e293b;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        ">
+    </form>
+</div>
+{% endblock %}

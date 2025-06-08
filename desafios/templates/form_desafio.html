@@ -1,0 +1,42 @@
+{% extends 'postulacion.html' %}
+{% load static %}
+
+{%block formulario%}
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
+
+    <h2>Rellena el formulario de desafío</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="{{ form.descripcionInicial.id_for_label }}">Coméntenos el desafío que desea resolver</label>
+            {{ form.descripcionInicial }}  
+        </div>
+        <div class="form-group">
+            <label for="{{ form.desafioFrase.id_for_label }}">Puede resumir su desafío en una frase?</label>
+            {{ form.desafioFrase }}  
+        </div>
+        <div class="form-group">
+            <label for="{{ form.presupuesto.id_for_label }}">Actualmente, cuenta con presupuesto para abordar este desafío?</label>
+            {{ form.presupuesto }} 
+        </div>
+        <div class="form-group">
+            <label for="{{ form.pregunta.id_for_label }}">Deseas hacer alguna pregunta o sugerencia al centro de innovación?</label>
+            {{ form.pregunta }}  
+        </div>  
+        <div class="form-group">
+            <label for="{{ form.origen.id_for_label }}">Cómo te enteraste de NODO Centro de Innovación OMCPL?</label>
+            {{ form.origen }} 
+        </div>
+        <div class="form-group">
+            <label >Escribe el siguiente texto </label>
+            {{ form.captcha }} 
+        </div>
+        
+        <div class="buttons">
+            <button type="button"onclick="location.href='contacto';" >Atras</button>
+            <button type="submit">Finalizar</button>
+        </div>
+    </form>
+{%endblock%}
+
+

@@ -1,0 +1,13 @@
+{% extends 'admin.html' %}
+{% load static %}
+{% block content %}
+    <link rel="stylesheet" href="{% static 'css/match.css' %}">
+
+    <div class="evaluacion">
+        <p><b>Fecha:</b> {{ evaluacion.fecha }}</p>
+        <p><b>Valor:</b> {{ evaluacion.valor }}</p>
+        <p><b>Nota:</b> {{ evaluacion.nota }}</p>
+        
+        <a href="{% url 'editar_evaluacion' evaluacion.metrica.id evaluacion.id %}" class="button edit-button">Editar</a>
+    </div>
+{%endblock%}

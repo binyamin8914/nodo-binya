@@ -1,0 +1,134 @@
+.titulo {
+    position: fixed;
+    background-color: #fff;
+    width: max-content;
+    border-radius: 10px;
+    border: #ddd 1px solid;
+    padding: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+
+}
+.titulo h1 {
+    display: inline-block;
+    font-size: 1.8rem;
+    text-align: center;
+    color: #01014B;
+}
+
+form {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 10px;
+    box-sizing: border-box;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+}
+.depurar-form{
+    margin-top: 130px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    color: #333;
+}
+
+input[type="text"],
+input[type="url"],
+input[type="number"],
+input[type="file"],
+select,
+textarea {
+    width: 90%;
+    padding: 0.8rem;
+    box-sizing: border-box;
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: border 0.3s ease;
+}
+
+textarea {
+    resize: vertical;
+}
+
+input[type="text"]:focus,
+input[type="url"]:focus,
+input[type="number"]:focus,
+textarea:focus,
+select:focus {
+    border-color: #0984e3;
+    outline: none;
+}
+
+/* Checkboxes */
+input[type="checkbox"] {
+    margin-right: 0.5rem;
+}
+
+label[for="id_isPrincipal"],
+label[for="id_show"] {
+    margin-bottom: 0.5rem;
+    font-weight: normal;
+}
+.form-columns {
+    display: flex;
+}
+
+.form-column {
+    flex: 1;
+}
+.bigbuttons{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    gap: 10px;
+}
+.bigbutton {
+    display: block;
+    width: 100%;
+    padding: 0.8rem;
+    background: #020381;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.bigbutton:hover {
+    background: #0652a5;
+}
+
+
+.errorlist {
+    color: red;
+    font-size: 14px;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    margin-bottom: 0px;
+  }
+  
+.errorlist li {
+    margin-bottom: 0px;
+}
+
+label[for="imagen-clear_id"] {
+    display: inline-block;
+}
+
+.match{
+    display: flex;
+    flex-grow: 1;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.match .form-group{
+    width: 40%;
+}

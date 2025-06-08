@@ -1,0 +1,132 @@
+{% extends 'admin.html' %}
+
+{% block content %}
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <title>Depurar Desafío</title>
+    <link rel="stylesheet" href="{% static 'css/formulario.css' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+
+</head>
+<body>
+    {%block volver%}
+    {%endblock%}
+
+    <div class="titulo">
+        <button class="volver" onclick="volver()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M15 8a.5.5 0 0 1-.5.5H3.707l3.147 3.146a.5.5 0 0 1-.708.708l-4-4a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L3.707 7.5H14.5a.5.5 0 0 1 .5.5z"/>
+            </svg> 
+        </button>
+        <h1>Depurar Desafío - Postulación: {{ postulacion.id }}</h1>    
+        <button class= "bigbutton"onclick="abrirVentana()">Consultar postulacion</button>
+        <script>
+            function abrirVentana() {
+                window.open("{% url 'verpostulacion' id=postulacion.id %}", "ventanaEmergente", "width=1000,height=700,scrollbars=yes,resizable=yes");
+            }
+        </script>
+    </div>
+    <form method="POST" enctype="multipart/form-data" class="depurar-form">
+        {% csrf_token %}
+        <div class="form-columns">
+            <div class="form-column">
+                <label for="postulacion">Postulacion</label>
+                <input type="text" name="postulacion" value="{{ postulacion}}" disabled>
+                
+                <label for="contacto">Contacto</label>
+                <input type="text" name="contacto" value="{{ postulacion.contacto }}" disabled>
+                
+                <label for="webEmpresa">Web de la Empresa</label>
+                {{ form.webEmpresa }}
+                
+                <label for="impactoProblema">¿A quiénes impacta este problema?</label>
+                {{ form.impactoProblema }}
+                
+                <label for="descripcionDesafio">Descripcion del desafio</label>
+                {{ form.descripcionDesafio }}
+                
+                <label for="ventasMesUsd">Ventas al mes (USD)</label>
+                {{ form.ventasMesUsd }}
+                
+                
+                 
+                <label for="ebitda">Ebitda (USD)</label>
+                {{ form.ebitda }}
+
+                
+
+                <label for="imagen">Portada</label>
+
+                    {% if form.instance.imagen %}
+                        <br>
+                        <!-- Miniatura clickeable -->
+                        <a href="{{ form.instance.imagen.url }}" target="_blank">
+                            <img src="{{ form.instance.imagen.url }}" alt="Imagen actual" style="max-width: 150px; cursor: pointer; border: 1px solid #ddd; border-radius: 8px; padding: 5px;">
+                        </a>
+                        <br>
+                    {% endif %}
+                {{ form.imagen }}
+                <label>Documentos Cargados:</label>
+                <ul>
+                    {% for documento in existing_documents %}
+                        <li>
+                            <a href="{% url 'serve_document' documento.archivo.name|slice:'11:' %}" target="_blank">
+                                {{ documento.nombre }}
+                            </a>
+                            <input type="checkbox" name="eliminar_documentos" value="{{ documento.id }}"> Eliminar
+                        </li>
+                    {% empty %}
+                        <li>No hay documentos cargados.</li>
+                    {% endfor %}
+                </ul>
+
+                <label for="documentos">Documentación que nos permita entender mejor el problema:</label>
+                <input type="file" name="documentos" multiple>
+
+                
+
+            </div>
+
+            <div class="form-column">
+                <label for="empresa">Empresa</label>
+                <input type="text" name="empresa" value="{{ postulacion.empresa }}" disabled>
+
+                <label for="ejecutivo">Ejecutivo</label>
+                <input type="text" name="ejecutivo" value="{{ user }}" disabled>
+
+                <label for="nombreDesafio">Nombre del desafio</label>
+                {{ form.nombreDesafio }}
+
+                <label for="efectoOperacion">¿Qué efecto tiene en la operación?</label>
+                {{ form.efectoOperacion }}
+
+                <label for="intentosPreviosSolucion">¿Ya se ha intentado antes resolver? ¿Qué se ha hecho?</label>
+                {{ form.intentosPreviosSolucion }}
+
+                <label for="costoOportunidad">¿Tienen estimado el costo que produce o la oportunidad desaprovechada?(USD)</label>
+                {{ form.costoOportunidad }}
+
+                <label for="margenBruto">Margen bruto (USD)</label>
+                {{ form.margenBruto }}
+
+                <label for="cantidadClientes">Cantidad de clientes</label>
+                {{ form.cantidadClientes }}
+
+                <label for="isPrincipal">Marcar como principal?</label>
+                {{ form.isPrincipal }}
+
+                <label for="show">Mostrar publicamente?</label>
+                {{ form.show }}
+                
+
+            </div>
+        </div>
+        <button class="bigbutton" type="submit">Guardar Cambios</button>
+    </form>
+
+</body>
+</html>
+{%endblock%}

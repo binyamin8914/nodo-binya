@@ -1,0 +1,63 @@
+
+
+
+
+.container-ver{
+    max-width: 1200px;
+    margin: 20px auto;  
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.cuadro {
+    padding: 15px;
+    background-color: #fafafa;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.empresa p, .contacto p, .postulacion p {
+    margin: 20px 0;
+}
+
+.empresa {
+    border-left: 5px solid #4A90E2;
+}
+
+.contacto {
+    border-left: 5px solid #50E3C2;
+}
+
+.postulacion {
+    border-left: 5px solid #9013FE;
+    grid-row: span 3;
+    overflow-wrap: anywhere;
+}
+.documentos {
+    border-left: 5px solid #daff33;
+    grid-column: span 2;
+}
+.imagen {
+    border-left: 5px solid #ff33be;
+    grid-column: span 2;
+}
+.imagen img{
+    max-width: 100%;
+    max-height: 250px;
+    border-radius: 8px;
+}
+
+
+.match {
+    border-left: 5px solid #9013FE;
+    grid-column: span 3;
+    overflow-wrap: anywhere;
+}
+
+
+@media (max-width: 1160px) {
+    .documentos {
+        grid-column: span 1;
+    }
+}

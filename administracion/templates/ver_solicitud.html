@@ -1,0 +1,18 @@
+{% extends 'admin.html' %}
+{% load static %}
+{% block content %}
+    <link rel="stylesheet" href="{% static 'css/ver.css' %}">
+    <h1>Solicitud de contacto #{{solicitud.id}}</h1>
+    <div class="container-ver">
+        <div class="cuadro empresa">
+            <h2>Solicitud</h2>
+            <p><b>Nombre:</b> {{ solicitud.nombre }}</p>
+            <p><b>Cargo:</b> {{ solicitud.cargo }}</p>
+            <p><b>Correo:</b> {{ solicitud.correo }}</p>
+            <p><b>Empresa:</b> {{ solicitud.empresa }}</p>
+            <p><b>País:</b> {{ solicitud.pais }}</p>
+            <p><b>Mensaje:</b> {{ solicitud.mensaje }}</p>
+            <p><b>Origen:</b> {{ solicitud.origen }}</p>
+        </div>
+    </div>  
+{% endblock %}

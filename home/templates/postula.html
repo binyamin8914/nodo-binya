@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/postula.css' %}">
+{% endblock %} 
+
+{% block content %}
+<div class="container_postula">
+    <!-- Sección de Desafío -->
+    <div class="section desafio">
+        <h2>Postula un Desafío</h2>
+        <p>
+            ¿Tienes un problema que necesita una solución innovadora? ¡Postula tu desafío y encuentra a los mejores expertos para resolverlo!
+        </p>
+        <a href="{% url 'empresa_step'  %}" class="btn" >Postular Desafío</a>
+    </div>
+
+    <!-- Sección de Solución -->
+    <div class="section solucion">
+        <h2>Propón una Solución</h2>
+        <p>
+            ¿Eres un experto en tu campo? ¡Propón una solución a los desafíos existentes o sugiere una solucion abierta!
+        </p>
+        <a href="{% url 'empresa_step_i' 0 %}" class="btn">Postular Solucion</a>
+    </div>
+</div>
+    
+    
+
+
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends 'admin.html' %}
+
+{% block content %}
+<h1 >Empresas</h1>
+<table border="1" cellpadding="10" cellspacing="0">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Nombre</th>
+            <th>Cantidad de personas</th>
+            <th>Pais</th>
+            <th>Actividad</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for empresa in empresas %}
+        <tr>
+            <td>{{ empresa.id }}</td>
+            <td>{{ empresa.nombre }}</td>
+            <td>{{ empresa.cantPersonas }}</td>
+            <td>{{ empresa.pais }}</td>
+            <td>{{ empresa.actividad }}</td>
+            <td>
+                <a href="{% url 'verempresa' id=empresa.id %}">Ver</a>
+                
+            </td>
+            
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="5">No hay postulaciones disponibles.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

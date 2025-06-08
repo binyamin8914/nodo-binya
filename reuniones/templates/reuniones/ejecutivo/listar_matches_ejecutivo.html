@@ -1,0 +1,49 @@
+{% extends "admin.html" %}
+
+{% block title %}Matches Disponibles{% endblock %}
+
+{% block content %}
+<div class="panel" style="
+    background-color: white;
+    border-radius: 16px;
+    padding: 45px 50px;
+    width: 100%;
+    max-width: 600px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    margin: auto;
+">
+    <h2 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 10px; color: #1e293b;">
+        Matches Disponibles
+    </h2>
+
+    {% if messages %}
+        {% for m in messages %}
+            <div class="message" style="
+                background-color: #e6f3ff;
+                padding: 10px;
+                border-radius: 8px;
+                margin-bottom: 15px;
+                color: #1e293b;
+            ">{{ m }}</div>
+        {% endfor %}
+    {% endif %}
+
+    {% if matches %}
+        {% for match in matches %}
+            <div style="margin-bottom: 25px;">
+                <h3>{{ match.desafio.nombreDesafio }}</h3>
+                <p><strong>Iniciativa:</strong> {{ match.iniciativa }}</p>
+                <p><strong>Contacto:</strong> {{ match.desafio.contacto.get_full_name|default:match.desafio.contacto.correo }}</p>
+                <a href="{% url 'reuniones:crear_reunion_directa' match_id=match.id %}"
+                   style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px;">
+                    Agendar Reunión
+                </a>
+            </div>
+            <hr>
+        {% endfor %}
+    {% else %}
+        <p>No hay matches disponibles.</p>
+    {% endif %}
+</div>
+{% endblock %}

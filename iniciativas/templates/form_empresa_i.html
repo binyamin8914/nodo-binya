@@ -1,0 +1,35 @@
+{% extends 'postulacion_iniciativa.html' %}
+{% load static %}
+
+{%block formulario%}
+    <h2>Rellena el formulario de empresa</h2>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="{{ form.nombre.id_for_label }}">Nombre de empresa o Institucion Publica</label>
+            {{ form.nombre }}  
+        </div>
+          
+        <div class="form-group">
+            <label for="{{ form.cantPersonas.id_for_label }}">Cantidad de personas que tiene su empresa</label>
+            {{ form.cantPersonas }}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.año.id_for_label }}">Año de fundacion de la empresa</label>
+            {{ form.año }}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.actividad.id_for_label }}">Actividad de la empresa</label>
+            {{ form.actividad }}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.pais.id_for_label }}">Pais sede principal</label>
+            {{ form.pais }}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.ciudad.id_for_label }}">Ciudad</label>
+            {{ form.ciudad }}
+        </div>
+        <button type="submit">Siguiente</button>
+    </form>
+{%endblock%}

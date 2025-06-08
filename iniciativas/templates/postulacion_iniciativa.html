@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block head %}
+    <link rel="stylesheet" href="{% static 'css/postulacion_i.css' %}">
+{% endblock %} 
+
+{%block content%}
+    <div class="content">
+        
+        <div class="formulario">
+            {% block formulario %}
+            {%endblock%}
+        </div>
+        <div class="texto">
+            <h1>Postulacion de iniciativa</h1>
+            <p class="text">
+            Esta postualcion es el inicio del camino para que podamos administrar tu solucion de la mejor manera</p> 
+            <a class="view-more">Ver más</a>
+            <script src="{% static 'js/postulacion.js' %}"></script>
+
+        </div>
+    </div>
+{%endblock%}

@@ -1,0 +1,51 @@
+{% extends 'admin.html' %}
+
+{% block title %}Gestión de Usuarios | NODO{% endblock %}
+
+{% block content %}
+<div class="section-header">
+    <h1>Gestión de Usuarios Ejecutivos</h1>
+    <a href="{% url 'crear_ejecutivo' %}" class="btn-primary">Crear Nuevo Ejecutivo</a>
+</div>
+
+{% if messages %}
+<div class="messages">
+    {% for message in messages %}
+    <div class="message {{ message.tags }}">
+        {{ message }}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="table-container">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Correo</th>
+                <th>Cargo</th>
+                <th>Teléfono</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for usuario in usuarios %}
+            <tr>
+                <td>{{ usuario.nombre }}</td>
+                <td>{{ usuario.correo }}</td>
+                <td>{{ usuario.cargo }}</td>
+                <td>{{ usuario.telefono|default:"-" }}</td>
+                <td class="actions">
+                    <a href="{% url 'desactivar_ejecutivo' usuario.id %}" class="btn-danger" onclick="return confirm('¿Estás seguro de que deseas desactivar este usuario?')">Desactivar</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="empty-table">No hay usuarios ejecutivos registrados.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
