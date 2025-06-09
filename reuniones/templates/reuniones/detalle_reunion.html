@@ -19,7 +19,7 @@
         {% elif user.tipo == 'contacto' %}
             <a href="{% url 'reuniones:listar_reuniones' %}" style="color:#4361ee;font-weight:600;">Volver</a>
         {% else %}
-            <a href="{% url 'reuniones:home' %}" style="color:#4361ee;font-weight:600;">Volver</a>
+            <a href="{% url 'reuniones:listar_reuniones_ejecutivo' %}" style="color:#4361ee;font-weight:600;">Volver</a>
         {% endif %}
     </div>
 
