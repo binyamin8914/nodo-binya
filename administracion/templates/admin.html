@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    {% load static %} {% block head %}{% endblock %}
+    {% load static %} {% load perfil_tags %} {% block head %}{% endblock %}
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{% block title %}NODO{% endblock %}</title>
@@ -143,7 +143,8 @@
           <!-- SECCIÓN: REUNIONES -->
           <h2 onclick="toggleMenu(this)">Reuniones</h2>
           <div class="submenu">
-            {% if user.rol == "ejecutivo" %}
+            {% get_rol user as rol %}
+            {% if rol == "ejecutivo" %}
               <li>
                 <a href="{% url 'reuniones:listar_matches_ejecutivo' %}" class="{% if active_page == 'listar_matches_ejecutivo' %}active{% endif %}">
                   Listar matches
@@ -159,7 +160,7 @@
                   Solicitudes
                 </a>
               </li>
-            {% elif user.rol == "contacto" %}
+            {% elif rol == "contacto" %}
               <li>
                 <a href="{% url 'reuniones:listar_matches' %}" class="{% if active_page == 'listar_matches' %}active{% endif %}">
                   Listar matches
