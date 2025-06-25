@@ -25,7 +25,6 @@ import traceback
 from .utils import puede_unirse_reunion, tiempo_restante_reunion, encode_google_calendar_id
 
 # ----------------------------
-# Añadir esta función a views.py después de los imports
 def safe_crear_evento_oauth(perfil, reunion):
     """Wrapper que asegura fechas con zona horaria antes de crear eventos"""
     # Asegurar que la fecha tenga zona horaria
@@ -435,109 +434,109 @@ def detalle_reunion(request, reunion_id):
 # Vistas para Contactos
 # ----------------------------
 
-@login_required
-def listar_matches_contacto(request):
-    """Listar matches donde el usuario es contacto"""
-    if get_user_rol(request.user) != 'contacto':
-        raise PermissionDenied
-
-    perfil = get_user_perfil(request.user)
-    # Match.desafio.contacto es usuario_base
-    matches = Match.objects.filter(
-        desafio__contacto=perfil,
-        isActive=True
-    ).select_related('desafio', 'iniciativa')
-    return render(request, 'reuniones/contacto/listar_matches.html', {
-        "active_page": "listar_matches",
-        'matches': matches
-    })
-
-
-@login_required
-def solicitar_reunion_contacto(request, match_id):
-    """Contacto solicita una reunión"""
-    if get_user_rol(request.user) != 'contacto':
-        raise PermissionDenied
-
-    perfil = get_user_perfil(request.user)
-    match = get_object_or_404(Match, id=match_id, desafio__contacto=perfil)
-    if request.method == 'POST':
-        form = SolicitudReunionForm(request.POST)
-        if form.is_valid():
-            solicitud = form.save(commit=False)
-            solicitud.match = match
-            solicitud.solicitante = perfil
-            # El ejecutivo destino del match, se obtiene desde Match.ejecutivo,
-            # pero SolicitudReunion.destinatario espera usuario_base. 
-            # Debes mapear el User a usuario_base por email.
-            try:
-                ejecutivo_user = match.ejecutivo
-                ejecutivo_base = usuario_base.objects.get(correo=ejecutivo_user.email)
-            except usuario_base.DoesNotExist:
-                messages.error(request, "No se encontró el ejecutivo correspondiente en usuario_base.")
-                return redirect('reuniones:listar_matches')
-            solicitud.destinatario = ejecutivo_base
-            solicitud.save()
-            messages.success(request, "Solicitud enviada correctamente.")
-            return redirect('reuniones:listar_solicitudes_contacto')
-    else:
-        form = SolicitudReunionForm()
-    return render(request, 'reuniones/contacto/solicitar_reunion.html', {'form': form, 'match': match})
-
-
-@login_required
-def listar_solicitudes_contacto(request):
-    """Listar solicitudes enviadas por el contacto"""
-    if get_user_rol(request.user) != 'contacto':
-        raise PermissionDenied
-
-    perfil = get_user_perfil(request.user)
-    solicitudes = SolicitudReunion.objects.filter(
-        solicitante=perfil
-    ).select_related('match', 'destinatario').order_by('-creada_en')
-    return render(request, 'reuniones/contacto/listar_solicitudes.html', {
-        "active_page": "listar_solicitudes",
-        'solicitudes': solicitudes
-    })
-
-
-@login_required
-def listar_reuniones_contacto(request):
-    """Reuniones donde el contacto es participante"""
-    if get_user_rol(request.user) != 'contacto':
-        raise PermissionDenied
-
-    perfil = get_user_perfil(request.user)
-    # CAMBIO AQUÍ: Usar la función estandarizada
-    google_conectado = tiene_google_conectado(perfil)
-    
-    es_contacto = Match.objects.filter(desafio__contacto=perfil).exists()
-    if not es_contacto:
-        return HttpResponse("No estás vinculado como contacto en ningún desafío.", status=400)
-
-    form = FiltroReunionesForm(request.GET or None)
-    reuniones = Reunion.objects.filter(
-        match__desafio__contacto=perfil
-    ).select_related('match', 'organizador', 'match__desafio').order_by('-fecha')
-
-    if form.is_valid():
-        if form.cleaned_data['tipo']:
-            reuniones = reuniones.filter(tipo=form.cleaned_data['tipo'])
-        if form.cleaned_data['desde']:
-            reuniones = reuniones.filter(fecha__gte=form.cleaned_data['desde'])
-        if form.cleaned_data['hasta']:
-            reuniones = reuniones.filter(fecha__lte=form.cleaned_data['hasta'])
-
-    # Añadir información de si se puede unir a cada reunión
-    for reunion in reuniones:
-        reunion.puede_unirse = puede_unirse_reunion(reunion)
-
-    return render(request, 'reuniones/contacto/listar_reuniones.html', {
-        "active_page": "listar_reuniones",
-        'reuniones': reuniones,
-        'form': form,
-        'google_conectado': google_conectado  # CAMBIO AQUÍ: Añadir esta variable
-    })
+# @login_required
+# def listar_matches_contacto(request):
+#     """Listar matches donde el usuario es contacto"""
+#     if get_user_rol(request.user) != 'contacto':
+#         raise PermissionDenied
+#
+#     perfil = get_user_perfil(request.user)
+#     # Match.desafio.contacto es usuario_base
+#     matches = Match.objects.filter(
+#         desafio__contacto=perfil,
+#         isActive=True
+#     ).select_related('desafio', 'iniciativa')
+#     return render(request, 'reuniones/contacto/listar_matches.html', {
+#         "active_page": "listar_matches",
+#         'matches': matches
+#     })
+#
+#
+# @login_required
+# def solicitar_reunion_contacto(request, match_id):
+#     """Contacto solicita una reunión"""
+#     if get_user_rol(request.user) != 'contacto':
+#         raise PermissionDenied
+#
+#     perfil = get_user_perfil(request.user)
+#     match = get_object_or_404(Match, id=match_id, desafio__contacto=perfil)
+#     if request.method == 'POST':
+#         form = SolicitudReunionForm(request.POST)
+#         if form.is_valid():
+#             solicitud = form.save(commit=False)
+#             solicitud.match = match
+#             solicitud.solicitante = perfil
+#             # El ejecutivo destino del match, se obtiene desde Match.ejecutivo,
+#             # pero SolicitudReunion.destinatario espera usuario_base. 
+#             # Debes mapear el User a usuario_base por email.
+#             try:
+#                 ejecutivo_user = match.ejecutivo
+#                 ejecutivo_base = usuario_base.objects.get(correo=ejecutivo_user.email)
+#             except usuario_base.DoesNotExist:
+#                 messages.error(request, "No se encontró el ejecutivo correspondiente en usuario_base.")
+#                 return redirect('reuniones:listar_matches')
+#             solicitud.destinatario = ejecutivo_base
+#             solicitud.save()
+#             messages.success(request, "Solicitud enviada correctamente.")
+#             return redirect('reuniones:listar_solicitudes_contacto')
+#     else:
+#         form = SolicitudReunionForm()
+#     return render(request, 'reuniones/contacto/solicitar_reunion.html', {'form': form, 'match': match})
+#
+#
+# @login_required
+# def listar_solicitudes_contacto(request):
+#     """Listar solicitudes enviadas por el contacto"""
+#     if get_user_rol(request.user) != 'contacto':
+#         raise PermissionDenied
+#
+#     perfil = get_user_perfil(request.user)
+#     solicitudes = SolicitudReunion.objects.filter(
+#         solicitante=perfil
+#     ).select_related('match', 'destinatario').order_by('-creada_en')
+#     return render(request, 'reuniones/contacto/listar_solicitudes.html', {
+#         "active_page": "listar_solicitudes",
+#         'solicitudes': solicitudes
+#     })
+#
+#
+# @login_required
+# def listar_reuniones_contacto(request):
+#     """Reuniones donde el contacto es participante"""
+#     if get_user_rol(request.user) != 'contacto':
+#         raise PermissionDenied
+#
+#     perfil = get_user_perfil(request.user)
+#     # CAMBIO AQUÍ: Usar la función estandarizada
+#     google_conectado = tiene_google_conectado(perfil)
+#     
+#     es_contacto = Match.objects.filter(desafio__contacto=perfil).exists()
+#     if not es_contacto:
+#         return HttpResponse("No estás vinculado como contacto en ningún desafío.", status=400)
+#
+#     form = FiltroReunionesForm(request.GET or None)
+#     reuniones = Reunion.objects.filter(
+#         match__desafio__contacto=perfil
+#     ).select_related('match', 'organizador', 'match__desafio').order_by('-fecha')
+#
+#     if form.is_valid():
+#         if form.cleaned_data['tipo']:
+#             reuniones = reuniones.filter(tipo=form.cleaned_data['tipo'])
+#         if form.cleaned_data['desde']:
+#             reuniones = reuniones.filter(fecha__gte=form.cleaned_data['desde'])
+#         if form.cleaned_data['hasta']:
+#             reuniones = reuniones.filter(fecha__lte=form.cleaned_data['hasta'])
+#
+#     # Añadir información de si se puede unir a cada reunión
+#     for reunion in reuniones:
+#         reunion.puede_unirse = puede_unirse_reunion(reunion)
+#
+#     return render(request, 'reuniones/contacto/listar_reuniones.html', {
+#         "active_page": "listar_reuniones",
+#         'reuniones': reuniones,
+#         'form': form,
+#         'google_conectado': google_conectado  # CAMBIO AQUÍ: Añadir esta variable
+#     })
 
 
 # -------------------

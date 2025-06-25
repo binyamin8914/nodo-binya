@@ -16,11 +16,11 @@ urlpatterns = [
     path('reuniones/eliminar/<int:reunion_id>/', views.eliminar_reunion, name='eliminar_reunion'),  # Eliminar reunión
     path('reunion/<int:reunion_id>/iniciar-virtual/', views.iniciar_reunion_virtual, name='iniciar_reunion_virtual'), # Iniciar reunión virtual
 
-    # Vistas para Contactos
-    path('contacto/matches/', views.listar_matches_contacto, name='listar_matches'),  # Listar matches donde el usuario es contacto
-    path('contacto/reunion/solicitar/<int:match_id>/', views.solicitar_reunion_contacto, name='solicitar_reunion'),  # Solicitar reunión
-    path('contacto/solicitudes/', views.listar_solicitudes_contacto, name='listar_solicitudes'),  # Listar solicitudes enviadas
-    path('contacto/reuniones/', views.listar_reuniones_contacto, name='listar_reuniones'),  # Listar reuniones donde el contacto participa
+    # Las siguientes vistas están reservadas para una futura implementación de la vista de Contacto Empresa
+    # path('contacto/matches/', views.listar_matches_contacto, name='listar_matches'),  # Listar matches donde el usuario es contacto
+    # path('contacto/reunion/solicitar/<int:match_id>/', views.solicitar_reunion_contacto, name='solicitar_reunion'),  # Solicitar reunión
+    # path('contacto/solicitudes/', views.listar_solicitudes_contacto, name='listar_solicitudes'),  # Listar solicitudes enviadas
+    # path('contacto/reuniones/', views.listar_reuniones_contacto, name='listar_reuniones'),  # Listar reuniones donde el contacto participa
 
     # Nuevas URLs para OAuth
     path('conectar-google/', oauth_views.iniciar_oauth_google, name='conectar_google'),

@@ -16,10 +16,7 @@
     <div class="nav-links" style="margin-bottom: 20px; text-align: left;">
         {% if user.tipo == 'ejecutivo' %}
             <a href="{% url 'reuniones:listar_reuniones_ejecutivo' %}" style="color:#4361ee;font-weight:600;">Volver</a>
-        {% elif user.tipo == 'contacto' %}
-            <a href="{% url 'reuniones:listar_reuniones' %}" style="color:#4361ee;font-weight:600;">Volver</a>
-        {% else %}
-            <a href="{% url 'reuniones:listar_reuniones_ejecutivo' %}" style="color:#4361ee;font-weight:600;">Volver</a>
+        <!-- No es necesario agregar aún lógica para 'contacto', implementar cuando sea necesario -->
         {% endif %}
     </div>
 

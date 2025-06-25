@@ -117,7 +117,7 @@
                         
                         {% if reunion.link_meet %}
                             {% if reunion.puede_unirse %}
-                                <a href="{% url 'reuniones:iniciar_reunion_virtual' reunion_id=reunion.id %}" style="display: inline-block; padding: 5px 10px; background-color: #28a745; color: white; text-decoration: none; border-radius: 5px; font-size: 0.85rem;">
+                                <a href="{% url 'reuniones:iniciar_reunion_virtual' reunion_id=reunion.id %}" target="_blank" rel="noopener" style="display: inline-block; padding: 5px 10px; background-color: #28a745; color: white; text-decoration: none; border-radius: 5px; font-size: 0.85rem;">
                                     <i class="fas fa-video"></i> Reunirse
                                 </a>
                             {% else %}
