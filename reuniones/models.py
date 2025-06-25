@@ -1,27 +1,38 @@
 from django.db import models
 from django.utils import timezone
 from administracion.models import Match, usuario_base
-from desafios.models import Desafio
 from datetime import timedelta
+from datetime import datetime
 
 class GoogleToken(models.Model):
-    """
-    Almacena los tokens de acceso de Google OAuth para cada usuario_base
-    """
     user = models.OneToOneField(usuario_base, on_delete=models.CASCADE)
     access_token = models.TextField()
-    refresh_token = models.TextField(null=True, blank=True)
-    token_uri = models.CharField(max_length=255, default="https://oauth2.googleapis.com/token")
-    client_id = models.CharField(max_length=255)
-    client_secret = models.CharField(max_length=255)
+    refresh_token = models.TextField(blank=True)
+    token_uri = models.CharField(max_length=200)
+    client_id = models.CharField(max_length=200)
+    client_secret = models.CharField(max_length=200)
     scopes = models.TextField()
-    expiry = models.DateTimeField()
-
-    def __str__(self):
-        return f"Token Google para {self.user.correo}"
+    expiry = models.DateTimeField(null=True)
     
     def is_expired(self):
-        return self.expiry <= timezone.now()
+        if not self.expiry:
+            return True
+        # Convertir la fecha de expiración a tipo aware si es naive
+        expiry = self.expiry
+        if expiry.tzinfo is None:
+            import pytz
+            from django.conf import settings
+            timezone = pytz.timezone(settings.TIME_ZONE)
+            expiry = timezone.localize(expiry)
+        
+        # Obtener la hora actual con zona horaria
+        now = timezone.now()
+        
+        # Comparar fechas aware
+        return expiry <= now
+    
+    def __str__(self):
+        return f"Token de Google para {self.user.nombres}"
 
 class SolicitudReunion(models.Model):
     """
@@ -105,17 +116,26 @@ class Reunion(models.Model):
 
     def crear_evento_google(self):
         """Crea el evento en Google Calendar"""
+        import logging
+        logger = logging.getLogger(__name__)
+        
         if not hasattr(self.organizador, 'googletoken'):
+            logger.error(f"Reunión {self.id}: El organizador no tiene token de Google")
             return None
+            
         from .google_api import crear_evento_oauth
         try:
             event_id, meet_link = crear_evento_oauth(self.organizador, self)
             self.google_event_id = event_id
             self.link_meet = meet_link
             self.save()
+            logger.info(f"Evento creado exitosamente para reunión {self.id}: {meet_link}")
             return True
-        except Exception:
-            # Aquí podrías registrar el error si quieres
+        except Exception as e:
+            logger.error(f"Reunión {self.id}: Error al crear evento en Google: {str(e)}")
+            # Registramos el error completo para diagnóstico
+            import traceback
+            logger.error(traceback.format_exc())
             return False
 
 class ParticipanteReunion(models.Model):

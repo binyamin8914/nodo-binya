@@ -1,0 +1,43 @@
+{% extends "admin.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Conecta tu cuenta de Google</h4>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <p><i class="fas fa-info-circle me-2"></i> Para crear o unirte a reuniones virtuales, necesitas conectar tu cuenta de Google
+                        para permitir acceso a Google Calendar y Google Meet.</p>
+                    </div>
+                    
+                    <p>Al hacer clic en "Conectar con Google", serás redirigido a Google para autorizar
+                    a esta aplicación a:</p>
+                    
+                    <ul>
+                        <li>Ver y gestionar eventos en tu calendario</li>
+                        <li>Crear reuniones virtuales con Google Meet</li>
+                    </ul>
+                    
+                    <p class="text-muted small">Esta autorización es necesaria solo una vez y puedes revocarla en cualquier momento desde tu cuenta de Google.</p>
+                    
+                    <div class="text-center mt-4">
+                        <a href="{% url 'reuniones:conectar_google' %}?next={{ request.path }}" 
+                           class="btn btn-primary btn-lg">
+                            <i class="fab fa-google me-2"></i> Conectar con Google
+                        </a>
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    <a href="{% url 'reuniones:listar_reuniones_ejecutivo' %}" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i> Volver a mis reuniones
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

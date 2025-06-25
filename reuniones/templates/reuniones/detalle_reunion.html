@@ -43,14 +43,56 @@
     {% if reunion.link_meet %}
         <p style="font-size: 1rem; margin-bottom: 10px; color: #475569; text-align: left;">
             <strong>Enlace Meet:</strong>
-            <a href="{{ reunion.link_meet }}" target="_blank" style="color:#4361ee;">
-                {{ reunion.link_meet }}
+            {% if puede_unirse %}
+                <a href="{{ reunion.link_meet }}" target="_blank" style="color:#4361ee;">
+                    {{ reunion.link_meet }}
+                </a>
+            {% else %}
+                <span style="color:#94a3b8;" title="El enlace estará disponible 30 minutos antes de la reunión">
+                    {{ reunion.link_meet }}
+                    <small>(disponible en {{ tiempo_restante }})</small>
+                </span>
+            {% endif %}
+        </p>
+    {% else %}
+        {% if google_conectado %}
+            {% if es_organizador %}
+                <!-- CAMBIO AQUÍ: Mostrar botón de regenerar enlace si es el organizador -->
+                <p style="font-size: 1rem; margin-bottom: 10px; color: #92400e; background: #fef9c3; padding: 8px; border-radius: 8px;">
+                    <em>Esta reunión no tiene un enlace Meet. Puedes crear uno haciendo clic en el botón de abajo.</em>
+                </p>
+                <form method="post">
+                    {% csrf_token %}
+                    <button type="submit" name="regenerar_enlace" value="1" class="btn" style="margin-bottom: 15px; background-color: #4285F4; color: white; border: none; border-radius: 4px; padding: 8px 16px; cursor: pointer;">
+                        Generar enlace Meet
+                    </button>
+                </form>
+            {% else %}
+                <p style="font-size: 1rem; margin-bottom: 10px; color: #92400e; background: #fef9c3; padding: 8px; border-radius: 8px;">
+                    <em>Esta reunión no tiene un enlace Meet configurado. Contacta al organizador.</em>
+                </p>
+            {% endif %}
+        {% else %}
+            <!-- CAMBIO AQUÍ: Mensaje si no tiene Google conectado -->
+            <p style="font-size: 1rem; margin-bottom: 10px; color: #92400e; background: #fef9c3; padding: 8px; border-radius: 8px;">
+                <em>Enlace Meet no disponible. Conecte Google Calendar para generarlo.</em>
+            </p>
+            <a href="{% url 'reuniones:conectar_google' %}" class="btn" style="display:inline-block; margin: 10px 0; padding: 8px 16px; color: white; background-color: #4285F4; border-radius: 4px; text-decoration: none; font-weight:600; font-size: 0.9rem;">
+                Conectar con Google
             </a>
-        </p>
-    {% elif not reunion.google_event_id and google_conectado %}
-        <p style="font-size: 1rem; margin-bottom: 10px; color: #92400e; background: #fef9c3; padding: 8px; border-radius: 8px;">
-            <em>Enlace Meet no disponible. Conecte Google Calendar para generarlo.</em>
-        </p>
+        {% endif %}
+    {% endif %}
+
+    {% if reunion.google_event_id %}
+        <div style="margin-top:20px;">
+            <h3 style="font-size: 1.2rem; text-align: left; color: #1e293b; margin-bottom: 10px;">Calendario:</h3>
+            <div style="position:relative; width:100%; padding-bottom:60%; border-radius:8px; overflow:hidden;">
+                <iframe src="https://calendar.google.com/calendar/embed?src={{ request.user.email|urlencode }}&mode=DAY&dates={{ reunion.fecha|date:'Ymd' }}/{{ reunion.fecha|date:'Ymd' }}&showNav=0&showPrint=0&showTabs=0&showCalendars=0&showTz=0"
+                        style="position:absolute; top:0; left:0; width:100%; height:100%; border:none;"
+                        frameborder="0" scrolling="no">
+                </iframe>
+            </div>
+        </div>
     {% endif %}
 
     <h3 style="font-size: 1.2rem; text-align: left; color: #1e293b; margin-top: 20px;">Participantes:</h3>

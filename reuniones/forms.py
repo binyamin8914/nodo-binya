@@ -2,7 +2,9 @@ from django import forms
 from django.utils import timezone
 from django.forms import DateTimeInput
 from datetime import timedelta
+import pytz
 from .models import SolicitudReunion, Reunion, ParticipanteReunion
+from django.conf import settings
 
 class DateTimeLocalInput(DateTimeInput):
     input_type = "datetime-local"
@@ -15,6 +17,18 @@ class DateTimeLocalField(forms.DateTimeField):
         "%Y-%m-%d %H:%M"
     ]
     widget = DateTimeLocalInput(format="%Y-%m-%dT%H:%M")
+    
+    def to_python(self, value):
+        """
+        Sobrescribimos este método para asegurar que las fechas
+        siempre tengan zona horaria después de la conversión.
+        """
+        dt = super().to_python(value)
+        if dt and dt.tzinfo is None:
+            # Añadir la zona horaria configurada en settings
+            tz = pytz.timezone(settings.TIME_ZONE)
+            dt = tz.localize(dt)
+        return dt
 
 class SolicitudReunionForm(forms.ModelForm):
     """Formulario para solicitar una reunión (usado por contactos)"""
@@ -41,6 +55,8 @@ class SolicitudReunionForm(forms.ModelForm):
 
     def clean_fecha_propuesta(self):
         fecha = self.cleaned_data['fecha_propuesta']
+        # La fecha ya debe tener zona horaria gracias al to_python sobrescrito
+        # Ahora podemos compararla con timezone.now() sin problemas
         if fecha < timezone.now() + timedelta(minutes=30):
             raise forms.ValidationError("La reunión debe programarse con al menos 30 minutos de anticipación")
         return fecha

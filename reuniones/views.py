@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-
+from django.utils import timezone
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
@@ -13,9 +13,52 @@ from .forms import (
     ReunionForm,
     SolicitudReunionForm,
 )
-from .google_api import crear_evento_oauth
 from .models import GoogleToken, ParticipanteReunion, Reunion, SolicitudReunion
 from administracion.models import Match, usuario_base
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ValidationError
+from .google_api import iniciar_reunion
+import logging
+import traceback
+from .utils import puede_unirse_reunion, tiempo_restante_reunion, encode_google_calendar_id
+
+# ----------------------------
+# Añadir esta función a views.py después de los imports
+def safe_crear_evento_oauth(perfil, reunion):
+    """Wrapper que asegura fechas con zona horaria antes de crear eventos"""
+    # Asegurar que la fecha tenga zona horaria
+    from django.utils import timezone
+    import traceback
+    
+    try:
+        if reunion.fecha and reunion.fecha.tzinfo is None:
+            # Añadir zona horaria a la fecha y guardar
+            reunion.fecha = timezone.make_aware(reunion.fecha)
+            reunion.save(update_fields=['fecha'])
+            print(f"Se añadió zona horaria a fecha de reunión {reunion.id}: {reunion.fecha}")
+    except Exception as e:
+        print(f"Error al preparar fecha: {str(e)}")
+        print(traceback.format_exc())
+    
+    # Ahora llamamos a la función original
+    from .google_api import crear_evento_oauth
+    try:
+        return crear_evento_oauth(perfil, reunion)
+    except Exception as e:
+        if "naive and offset-aware" in str(e):
+            print("Detectado error de zona horaria, intentando forzar zona horaria...")
+            try:
+                # Intento final con fuerza bruta
+                reunion.fecha = timezone.make_aware(reunion.fecha.replace(tzinfo=None))
+                reunion.save()
+                return crear_evento_oauth(perfil, reunion)
+            except Exception as inner_e:
+                print(f"Falló intento final: {str(inner_e)}")
+                raise inner_e
+        else:
+            raise e
 
 # --- FUNCIONES DE UTILIDAD ---
 def get_user_perfil(user):
@@ -27,6 +70,11 @@ def get_user_perfil(user):
 def get_user_rol(user):
     perfil = get_user_perfil(user)
     return perfil.rol if perfil else ""
+
+# Función nueva para estandarizar la verificación de Google
+def tiene_google_conectado(perfil):
+    """Verifica de manera uniforme si un usuario tiene token de Google"""
+    return GoogleToken.objects.filter(user=perfil).exists()
 
 
 # ----------------------------
@@ -60,6 +108,9 @@ def crear_reunion_directa(request, match_id):
     match = get_object_or_404(Match, id=match_id, ejecutivo=request.user)
     perfil = get_user_perfil(request.user)
     contacto = getattr(match.desafio, "contacto", None)  # contacto es usuario_base
+    
+    # CAMBIO AQUÍ: Usar la nueva función en lugar de hasattr
+    google_conectado = tiene_google_conectado(perfil)
 
     if request.method == 'POST':
         form = ReunionForm(request.POST)
@@ -69,7 +120,11 @@ def crear_reunion_directa(request, match_id):
                 reunion = form.save(commit=False)
                 reunion.match = match
                 reunion.organizador = perfil
-                reunion.fecha = form.cleaned_data['fecha']
+                fecha = form.cleaned_data['fecha']
+                if fecha.tzinfo is None:
+                    fecha = timezone.make_aware(fecha)
+                reunion.fecha = fecha
+                
                 reunion.save()
 
                 participantes = [
@@ -101,10 +156,10 @@ def crear_reunion_directa(request, match_id):
                             es_invitado_externo=True
                         )
 
-                # Integración con Google Calendar si está configurado
-                if hasattr(request.user, 'googletoken'):
+                # CAMBIO AQUÍ: Usar google_conectado en lugar de hasattr
+                if google_conectado:
                     try:
-                        event_id, meet_link = crear_evento_oauth(perfil, reunion)
+                        event_id, meet_link = safe_crear_evento_oauth(perfil, reunion)
                         reunion.google_event_id = event_id
                         reunion.link_meet = meet_link
                         reunion.save()
@@ -115,7 +170,7 @@ def crear_reunion_directa(request, match_id):
                 return redirect('reuniones:detalle_reunion', reunion_id=reunion.id)
     else:
         form = ReunionForm(initial={
-            'fecha': datetime.now() + timedelta(days=1),
+            'fecha': timezone.now() + timedelta(days=1),
             'duracion': 30,
             'tipo': 'inicial'
         })
@@ -123,7 +178,7 @@ def crear_reunion_directa(request, match_id):
     return render(request, 'reuniones/ejecutivo/crear_reunion_directa.html', {
         'form': form,
         'match': match,
-        'google_conectado': hasattr(request.user, 'googletoken')
+        'google_conectado': google_conectado  # CAMBIO AQUÍ: Usar la nueva variable
     })
 
 
@@ -159,6 +214,9 @@ def responder_solicitud(request, solicitud_id):
         estado='pendiente'
     )
     contacto = getattr(solicitud.match.desafio, "contacto", None)
+    
+    # CAMBIO AQUÍ: Usar la nueva función para verificar Google
+    google_conectado = tiene_google_conectado(perfil)
 
     if request.method == 'POST':
         form = ResponderSolicitudForm(request.POST)
@@ -199,9 +257,10 @@ def responder_solicitud(request, solicitud_id):
                                 email=p[2],
                                 es_invitado_externo=True
                             )
-                    if hasattr(request.user, 'googletoken'):
+                    # CAMBIO AQUÍ: Usar google_conectado en lugar de hasattr
+                    if google_conectado:
                         try:
-                            event_id, meet_link = crear_evento_oauth(perfil, reunion)
+                            event_id, meet_link = safe_crear_evento_oauth(perfil, reunion)
                             reunion.google_event_id = event_id
                             reunion.link_meet = meet_link
                             reunion.save()
@@ -222,7 +281,8 @@ def responder_solicitud(request, solicitud_id):
 
     return render(request, 'reuniones/ejecutivo/responder_solicitud.html', {
         'form': form,
-        'solicitud': solicitud
+        'solicitud': solicitud,
+        'google_conectado': google_conectado  # CAMBIO AQUÍ: Añadir esta variable
     })
 
 
@@ -233,6 +293,10 @@ def listar_reuniones_ejecutivo(request):
         raise PermissionDenied
 
     perfil = get_user_perfil(request.user)
+    
+    # CAMBIO AQUÍ: Usar la función estandarizada
+    google_conectado = tiene_google_conectado(perfil)
+    
     form = FiltroReunionesForm(request.GET or None)
     reuniones = Reunion.objects.filter(
         organizador=perfil
@@ -246,12 +310,17 @@ def listar_reuniones_ejecutivo(request):
         if form.cleaned_data['hasta']:
             reuniones = reuniones.filter(fecha__lte=form.cleaned_data['hasta'])
 
+    # Añadir información de si se puede unir a cada reunión
+    for reunion in reuniones:
+        reunion.puede_unirse = puede_unirse_reunion(reunion)
+
     return render(request, 'reuniones/ejecutivo/listar_reuniones_ejecutivo.html', {
         "active_page": "listar_reuniones_ejecutivo",
         'reuniones': reuniones,
-        'form': form
+        'form': form,
+        'google_conectado': google_conectado,
+        'user': request.user
     })
-
 
 @login_required
 def editar_reunion(request, reunion_id):
@@ -260,12 +329,16 @@ def editar_reunion(request, reunion_id):
     perfil = get_user_perfil(request.user)
     if reunion.organizador != perfil:
         raise PermissionDenied
+    
+    # CAMBIO AQUÍ: Usar la función estandarizada
+    google_conectado = tiene_google_conectado(perfil)
 
     if request.method == 'POST':
         form = ReunionForm(request.POST, instance=reunion)
         if form.is_valid():
             reunion = form.save()
-            if hasattr(request.user, 'googletoken') and reunion.google_event_id:
+            # CAMBIO AQUÍ: Usar google_conectado en lugar de hasattr
+            if google_conectado and reunion.google_event_id:
                 try:
                     from .google_api import actualizar_evento_oauth
                     actualizar_evento_oauth(perfil, reunion)
@@ -277,7 +350,8 @@ def editar_reunion(request, reunion_id):
         form = ReunionForm(instance=reunion)
     return render(request, 'reuniones/ejecutivo/editar_reunion.html', {
         'form': form,
-        'reunion': reunion
+        'reunion': reunion,
+        'google_conectado': google_conectado  # CAMBIO AQUÍ: Añadir esta variable
     })
 
 
@@ -288,9 +362,13 @@ def eliminar_reunion(request, reunion_id):
     perfil = get_user_perfil(request.user)
     if reunion.organizador != perfil:
         raise PermissionDenied
+    
+    # CAMBIO AQUÍ: Usar la función estandarizada
+    google_conectado = tiene_google_conectado(perfil)
 
     if request.method == 'POST':
-        if hasattr(request.user, 'googletoken') and reunion.google_event_id:
+        # CAMBIO AQUÍ: Usar google_conectado en lugar de hasattr
+        if google_conectado and reunion.google_event_id:
             try:
                 from .google_api import eliminar_evento_oauth
                 eliminar_evento_oauth(perfil, reunion)
@@ -300,7 +378,8 @@ def eliminar_reunion(request, reunion_id):
         messages.success(request, "Reunión eliminada correctamente")
         return redirect('reuniones:listar_reuniones_ejecutivo')
     return render(request, 'reuniones/ejecutivo/confirmar_eliminacion.html', {
-        'reunion': reunion
+        'reunion': reunion,
+        'google_conectado': google_conectado  # CAMBIO AQUÍ: Añadir esta variable
     })
 
 
@@ -314,12 +393,41 @@ def detalle_reunion(request, reunion_id):
     participantes = reunion.participantes.all().order_by('-es_invitado_externo', 'nombre')
     perfil = get_user_perfil(request.user)
     es_organizador = perfil == reunion.organizador
-    google_conectado = hasattr(request.user, 'googletoken')
+    
+    # CAMBIO AQUÍ: Usar la función estandarizada
+    google_conectado = tiene_google_conectado(perfil)
+
+    # Si es una solicitud POST para regenerar enlace
+    if request.method == 'POST' and 'regenerar_enlace' in request.POST and es_organizador and google_conectado:
+        try:
+            event_id, meet_link = safe_crear_evento_oauth(perfil, reunion)
+            reunion.google_event_id = event_id
+            reunion.link_meet = meet_link
+            reunion.save()
+            messages.success(request, "Enlace de Meet regenerado correctamente")
+        except Exception as e:
+            messages.error(request, f"No se pudo regenerar el enlace: {str(e)}")
+        return redirect('reuniones:detalle_reunion', reunion_id=reunion.id)
+
+    # Verificar si ya se puede unir a la reunión
+    puede_unirse = puede_unirse_reunion(reunion)
+    tiempo_restante = tiempo_restante_reunion(reunion)
+    
+    # Codificar el ID del evento para la URL de Google Calendar
+    calendar_id_encoded = None
+    if reunion.google_event_id:
+        calendar_id_encoded = encode_google_calendar_id(reunion.google_event_id)
+        print(f"ID original: {reunion.google_event_id}")
+        print(f"ID codificado: {calendar_id_encoded}")
+
     return render(request, 'reuniones/detalle_reunion.html', {
         'reunion': reunion,
         'participantes': participantes,
         'es_organizador': es_organizador,
-        'google_conectado': google_conectado
+        'google_conectado': google_conectado,
+        'puede_unirse': puede_unirse,
+        'tiempo_restante': tiempo_restante,
+        'calendar_id_encoded': calendar_id_encoded
     })
 
 
@@ -400,6 +508,9 @@ def listar_reuniones_contacto(request):
         raise PermissionDenied
 
     perfil = get_user_perfil(request.user)
+    # CAMBIO AQUÍ: Usar la función estandarizada
+    google_conectado = tiene_google_conectado(perfil)
+    
     es_contacto = Match.objects.filter(desafio__contacto=perfil).exists()
     if not es_contacto:
         return HttpResponse("No estás vinculado como contacto en ningún desafío.", status=400)
@@ -417,90 +528,76 @@ def listar_reuniones_contacto(request):
         if form.cleaned_data['hasta']:
             reuniones = reuniones.filter(fecha__lte=form.cleaned_data['hasta'])
 
+    # Añadir información de si se puede unir a cada reunión
+    for reunion in reuniones:
+        reunion.puede_unirse = puede_unirse_reunion(reunion)
+
     return render(request, 'reuniones/contacto/listar_reuniones.html', {
         "active_page": "listar_reuniones",
         'reuniones': reuniones,
-        'form': form
+        'form': form,
+        'google_conectado': google_conectado  # CAMBIO AQUÍ: Añadir esta variable
     })
 
 
-# ----------------------------
-# Vistas para Google OAuth
-# ----------------------------
+# -------------------
+# Vistas para Google 
+# -------------------
+
+# Configurar logging
+logger = logging.getLogger(__name__)
 
 @login_required
-def google_oauth_init(request):
-    """Inicia el flujo de OAuth con Google"""
-    from google_auth_oauthlib.flow import Flow
-    from django.conf import settings
-    import os
-
-    os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
-
-    flow = Flow.from_client_secrets_file(
-        settings.GOOGLE_CLIENT_SECRETS_FILE,
-        scopes=settings.GOOGLE_OAUTH_SCOPES,
-        redirect_uri=settings.GOOGLE_OAUTH_REDIRECT_URI
-    )
-
-    next_url = request.GET.get('next', '/')
-    authorization_url, state = flow.authorization_url(
-        access_type='offline',
-        include_granted_scopes='true',
-        prompt='consent',
-        state=next_url
-    )
-
-    request.session['google_oauth_state'] = state
-    return redirect(authorization_url)
-
-
-@login_required
-def google_oauth_callback(request):
-    """Callback para completar el flujo de OAuth"""
-    from google_auth_oauthlib.flow import Flow
-    from django.conf import settings
-    from django.urls import reverse
-    import os
-
-    os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
-
-    state = request.session.pop('google_oauth_state', '')
-    next_url = request.GET.get('state', reverse('reuniones:home'))
-
-    flow = Flow.from_client_secrets_file(
-        settings.GOOGLE_CLIENT_SECRETS_FILE,
-        scopes=settings.GOOGLE_OAUTH_SCOPES,
-        redirect_uri=settings.GOOGLE_OAUTH_REDIRECT_URI,
-        state=state
-    )
-
-    flow.fetch_token(authorization_response=request.build_absolute_uri())
-    creds = flow.credentials
-
-    perfil = get_user_perfil(request.user)
-    GoogleToken.objects.update_or_create(
-        user=perfil,
-        defaults={
-            'access_token': creds.token,
-            'refresh_token': creds.refresh_token,
-            'token_uri': creds.token_uri,
-            'client_id': creds.client_id,
-            'client_secret': creds.client_secret,
-            'scopes': ' '.join(creds.scopes),
-            'expiry': creds.expiry
-        }
-    )
-
-    messages.success(request, "Cuenta de Google conectada exitosamente")
-    return redirect(next_url)
-
-
-@login_required
-def google_disconnect(request):
-    """Desconectar la cuenta de Google"""
-    perfil = get_user_perfil(request.user)
-    if hasattr(perfil, 'googletoken'):
-        perfil.googletoken.delete()
-        messages.success(request, "Cuenta de Google desconectada")
-    return redirect(request.META.get('HTTP_REFERER', 'reuniones:listar_reuniones_ejecutivo'))
+def iniciar_reunion_virtual(request, reunion_id):
+    """
+    Vista para iniciar una reunión virtual o unirse a una existente.
+    Si la reunión ya tiene un enlace de Meet, redirige a ese enlace.
+    Si no tiene enlace, crea un evento en Google Calendar con enlace Meet.
+    """
+    try:
+        # Obtener la reunión
+        reunion = Reunion.objects.get(pk=reunion_id)
+        
+        # Obtener el usuario_base correspondiente al User actual
+        try:
+            usuario = usuario_base.objects.get(correo=request.user.email)
+        except usuario_base.DoesNotExist:
+            messages.error(request, "No se encontró un registro de usuario asociado. Contacta al administrador.")
+            return redirect('reuniones:listar_reuniones_ejecutivo')
+        
+        # Verificar que el usuario tenga acceso a esta reunión
+        es_organizador = reunion.organizador == usuario
+        es_participante = ParticipanteReunion.objects.filter(
+            reunion=reunion, 
+            email=usuario.correo
+        ).exists()
+        
+        if not (es_organizador or es_participante):
+            messages.error(request, "No tienes permiso para acceder a esta reunión.")
+            return redirect('reuniones:listar_reuniones_ejecutivo')
+        
+        # Verificar si existe un enlace manual (no requiere OAuth)
+        if reunion.link_meet and not reunion.google_event_id:
+            return redirect(reunion.link_meet)
+            
+        # CAMBIO AQUÍ: Usar la función estandarizada para verificar token
+        if not tiene_google_conectado(usuario):
+            # Si no tiene token, redirigir a la página para conectar con Google
+            return render(request, 'reuniones/error_google_token.html', {'reunion_id': reunion_id})
+        
+        # Iniciar reunión pasando el usuario_base
+        meet_link = iniciar_reunion(usuario, reunion)
+        
+        if meet_link:
+            return redirect(meet_link)
+        else:
+            messages.error(request, "No se pudo obtener un enlace para la reunión virtual.")
+    except Reunion.DoesNotExist:
+        messages.error(request, "La reunión solicitada no existe.")
+    except ValidationError as e:
+        messages.error(request, str(e))
+    except Exception as e:
+        logger.error(f"Error en iniciar_reunion_virtual: {str(e)}\n{traceback.format_exc()}")
+        messages.error(request, f"Error al iniciar la reunión: {str(e)}")
+    
+    return redirect('reuniones:listar_reuniones_ejecutivo')
